@@ -8,7 +8,7 @@ gcc -MD -fno-builtin -nostdinc -fno-stack-protector -Os -g -m32 -Iboot/boot0/ -c
 ld -nostdlib -m elf_i386 -N -e start -Ttext 0x7c00 -o tmp/boot0.elf tmp/boot0.o
 objcopy -S -O binary tmp/boot0.elf tmp/boot0
 
-# Boot 0 shit
+# Boot 1 shit
 gcc -MD -fno-builtin -nostdinc -fno-stack-protector -Os -g -m32 -Iboot/boot1/ -c -o tmp/boot1.o boot/boot1/boot1.S
 gcc -MD -fno-builtin -nostdinc -fno-stack-protector -Os -g -m32 -Iboot/boot1/ -c -o tmp/boot1main.o boot/boot1/boot1main.c
 gcc -MD -fno-builtin -nostdinc -fno-stack-protector -Os -g -m32 -Iboot/boot1/ -c -o tmp/boot1lib.o boot/boot1/boot1lib.c
