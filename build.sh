@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Make temp directories
+# Make temp directory
 mkdir tmp
 
 # Boot 0 shit
