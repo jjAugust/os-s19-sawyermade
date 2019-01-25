@@ -41,6 +41,7 @@
      */
     .set BOOT0ADDR, 0x7c00
     .set BOOT1ADDR, 0x7e00
+    .set BOOTIDADDR, (BOOT0ADDR - 4)
 
     /* define the global start symbol, code execution will begin here. */
     .globl start
@@ -81,7 +82,7 @@ start:
      * Info 1: We will use this information in boot1.
      * Info 2: The device ID is the ID of the Disk we booted from.
      */
-    movb %dl, (BOOT0ADDR - 4)
+    movb %dl, BOOTIDADDR
 
     /* TASK 5:
      *    - Setup the stack to start at boot0 - 4.
@@ -107,8 +108,8 @@ start:
      *        - This stack will grow just below the device id we stored in task 4.
      *        - 32-bit code would use %ebp and %esp instead of %bp and %sp.
      */
-    movw $(BOOT0ADDR - 4), %bp
-    movw $(BOOT0ADDR - 4), %sp
+    movw $BOOTIDADDR, %bp
+    movw $BOOTIDADDR, %sp
 
     /* set to normal (80x25 text) video mode */
 set_video_mode:

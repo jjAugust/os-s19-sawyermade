@@ -41,6 +41,7 @@
      */
     .set BOOT0ADDR, 0x7c00
     .set BOOT1ADDR, 0x7e00
+    .set BOOTIDADDR, (BOOT0ADDR - 4)
 
     /* Definitions you will use in your code below. */
     .set PROT_MODE_CSEG, 0x8    # GDT code segment selector
@@ -192,7 +193,7 @@ protcseg:
      * Hint 3: Remember that the device id (dev) is stored at BOOT0-4. Also remember that we want to pass the device ID itself NOT its address.
      * Hint 4: After pushing all the arguments, call boot1main
      */
-    mov (BOOT0ADDR - 4), %eax
+    mov BOOTIDADDR, %eax
     push smap
     push $BOOT0ADDR
     push %eax
