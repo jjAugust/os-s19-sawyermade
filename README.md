@@ -46,6 +46,10 @@ $ git push -f origin v0
 
 
 ## Anything we should know???
+### Install Dependencies:
+```
+$ bash install_deps.sh
+```
 ### Run: Builds img via build.sh, runs the file in qemu, and cleans everything up on completion.
 ```
 $ bash run.sh
