@@ -43,16 +43,24 @@ boot1main (uint32_t dev, mbr_t * mbr, bios_smap_t *smap)
 	 * Hint 4: An MBR-style parition table always has 4 entries.
 	 * Hint 5: The Logical block address (LBA) of the bootable parition is stored in the first_lba field of the partition table entry.
 	 */
+	int i = 0;
+	while(i < 4){
+		if(mbr->partition[i].bootable == BOOTABLE_PARTITION)
+			break;
+		i++;
+	}
+	if(i == 4)
+		panic("PANIC MOTHER FUCKER!!!!");
 
 	/* parse the memory map we extracted from the bios on the assembly side */
-	parse_e820 (smap);
+	parse_e820(smap);
 
 
 	/* TASK 2:
 	 *	- Execute the load_kernel function, and supply it the first LBA of the bootable partition.
 	 *	- Use the return of load_kernel and a pointer to the mboot_info variable to call exec_kernel.
 	 */
-
+	exec_kernel(load_kernel(mbr->partition[i].first_lba), &mboot_info);
 
 
 	/* exec_kernel should never return */

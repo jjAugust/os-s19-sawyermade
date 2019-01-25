@@ -39,7 +39,8 @@
      *
      *  Hint: use the assembly directive .set to assign a symbol to an expression.
      */
-
+    .set BOOT0ADDR, 0x7c00
+    .set BOOT1ADDR, 0x7e00
 
     /* define the global start symbol, code execution will begin here. */
     .globl start
@@ -53,7 +54,8 @@ start:
      *
      *     Hint: see the cli/sti and cld/std instructions.
      */
-
+    cli
+    cld
 
     /* TASK 3:
      *    - Clear these segment registers (by setting them to zero): %ds, %es, %ss
@@ -64,7 +66,10 @@ start:
      *    Hint 4: These are 16-bit registers so use "w" instruction suffix (e.g. xorw, movw).
      *
      */
-
+    xorw %ax, %ax
+    movw %ax, %ds
+    movw %ax, %es
+    movw %ax, %ss
 
     /* TASK 4:
      *    - store the booting device id at the address of boot0 - 4.
@@ -76,7 +81,7 @@ start:
      * Info 1: We will use this information in boot1.
      * Info 2: The device ID is the ID of the Disk we booted from.
      */
-
+    movb %dl, (BOOT0ADDR - 4)
 
     /* TASK 5:
      *    - Setup the stack to start at boot0 - 4.
@@ -102,8 +107,8 @@ start:
      *        - This stack will grow just below the device id we stored in task 4.
      *        - 32-bit code would use %ebp and %esp instead of %bp and %sp.
      */
-
-
+    movw $(BOOT0ADDR - 4), %bp
+    movw $(BOOT0ADDR - 4), %sp
 
     /* set to normal (80x25 text) video mode */
 set_video_mode:
@@ -138,9 +143,18 @@ load_boot1:
      *    Hint 6: Use the "int" instruction to trigger an intterupt after all the arguments and registers have been configured.
      *    Hint 7: Use the "jmp" to unconditionally jump.
      */
-
-
-
+    /* stack pushes */
+    pushl $0x00000000
+    pushl $0x00000001
+    pushl $0x00007e00
+    pushw $0x003e
+    pushw $0x0010
+    /* other shit */
+    xorl %eax, %eax
+    movb  $0x42, %ah
+    movw  %sp, %si 
+    int  $0x13
+    jmp  BOOT1ADDR
 
      /* Execution should never get here */
 spin:

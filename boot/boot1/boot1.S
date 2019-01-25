@@ -39,8 +39,8 @@
      *
      *  Hint: should be the same as boot0.
      */
-
-
+    .set BOOT0ADDR, 0x7c00
+    .set BOOT1ADDR, 0x7e00
 
     /* Definitions you will use in your code below. */
     .set PROT_MODE_CSEG, 0x8    # GDT code segment selector
@@ -62,7 +62,8 @@ start:
      *
      *     Hint: see the cli/sti and cld/std instructions.
      */
-
+    cli 
+    cld 
 
     /* enable A20
      * This is done because of a quirk in the x86 architecture.
@@ -89,7 +90,8 @@ seta20.2:
      *  Hint 2: We will define a startup message below.
      *  Hint 3: putstr needs a reference to the string loaded into the %si register.
      */
-
+    movw    $STARTUP_MSG, %si
+    call    putstr
 
     /*
      * detect the physical memory map
@@ -139,7 +141,7 @@ switch_prot:
      *  Hint 2: Use the GDT descriptor (a wrapper for the GDT, also defined at the end of this file).
      *  Hint 3: If you need to learn about a specific instruction in x86 see chapter 17 in the 80386 Programmer's Manual.
      */
-
+    lgdt gdtdesc
 
     /* TASK 5:
      *  - configure the CPU control control register 0 to be in PROTECTED mode.
@@ -159,6 +161,10 @@ switch_prot:
      *      - The definition of the GDT is below.
      *      - Even though we aren't jumping anywhere significant, the ljmp excutes the CPU state switch.
      */
+    mov %cr0, %eax
+    orb $0x01, %al
+    mov %eax, %cr0
+    ljmp $PROT_MODE_CSEG, $protcseg
 
     /* assemble the following instructions in 32-bit mode */
     .code32
@@ -171,7 +177,12 @@ protcseg:
      * Hint 1: PROT_MODE_DSEG should be an immediate value.
      * Hint 2: These segmentation regsiters are not general purpose registers. You must move from a temporary register.
      */
-
+    mov $PROT_MODE_DSEG, %ax
+    movw %ax, %ds
+    movw %ax, %es
+    movw %ax, %fs
+    movw %ax, %gs
+    movw %ax, %ss
 
     /* TASK 7:
      * - jump to the C part (boot1main)
@@ -181,8 +192,11 @@ protcseg:
      * Hint 3: Remember that the device id (dev) is stored at BOOT0-4. Also remember that we want to pass the device ID itself NOT its address.
      * Hint 4: After pushing all the arguments, call boot1main
      */
-
-
+    mov (BOOT0ADDR - 4), %eax
+    push smap
+    push $BOOT0ADDR
+    push %eax
+    call boot1main
 
     /* boot1main should never return! */
 spin:
@@ -223,7 +237,8 @@ NO_BOOTABLE_MSG:
 
     .p2align    2    /* force 4-byte alignment */
 
-
+DEBUB_SMAP:
+    .ascii    "Start boot1 ...\r\n\0"
 
 /* The Global Descriptor Table (GDT)
  *
