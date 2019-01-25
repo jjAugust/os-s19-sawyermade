@@ -29,4 +29,3 @@ dd if=tmp/kernel of=project0.img bs=512 seek=63 conv=notrunc
 
 # Cleans tmp
 rm -rf tmp
-
