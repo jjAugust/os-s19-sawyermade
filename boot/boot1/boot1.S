@@ -194,7 +194,7 @@ protcseg:
      * Hint 4: After pushing all the arguments, call boot1main
      */
     mov BOOTIDADDR, %eax
-    push smap
+    push $smap
     push $BOOT0ADDR
     push %eax
     call boot1main
