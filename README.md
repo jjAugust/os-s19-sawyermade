@@ -1,4 +1,4 @@
-# os-s19: Project 0: Bootloader
+# os-s19: Project 1: Memory Management
 
 The source files contain the Tasks to be implemented by you along with some helpful hints. 
 
@@ -12,16 +12,16 @@ To submit the project, you will create and push a tag from the latest commit wil
 ```
 $ git add <LIST_OF_UPDATED_FILES>
 $ git commit -m "<COMMENT>"
-$ git push origin project0
+$ git push origin project1
 ```
-2. Create a tag named `v0`.
+2. Create a tag named `v1`.
 ```
-$ git tag -a v0 -m "Submission for project 0."
+$ git tag -a v1 -m "Submission for project 1."
 ```
 
 3. Push the tag:
 ```
-$ git push origin v0
+$ git push origin v1
 ```
 
 ### To Re-submit:
@@ -31,17 +31,17 @@ To re-submit you will have to forcefully update the tag and (if already pushed) 
 ```
 $ git add <LIST_OF_UPDATED_FILES>
 $ git commit -m "<COMMENT>"
-$ git push origin project0
+$ git push origin project1
 ```
 
 2. Update the tag:
 ```
-$ git tag -a -f v0 -m "Resubmission for project 0."
+$ git tag -a -f v1 -m "Resubmission for project 1."
 ```
 
 3. Forcefully push the tag:
 ```
-$ git push -f origin v0
+$ git push -f origin v1
 ```
 
 
