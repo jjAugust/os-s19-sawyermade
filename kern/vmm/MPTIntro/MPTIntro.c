@@ -127,7 +127,7 @@ unsigned int get_ptbl_entry(unsigned int proc_index, unsigned int pde_index, uns
     frame = frame<<12;
     val = (unsigned int*)frame;
 
-    dprintf("\nval = %u\n", *val);
+    // dprintf("\nval = %u\n", *val);
     // return IDPTbl[pde_index][pte_index] = ;
     return *val;
 }

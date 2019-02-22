@@ -53,6 +53,7 @@ unsigned int alloc_ptbl(unsigned int proc_index, unsigned int vadr)
   addr = container_alloc(proc_index);
   pde_index = (vadr & DIR_MASK)>>DIR_SHIFT;
   if(addr > 0){
+    // dprintf("addr = %u\n", addr);
     set_pdir_entry_by_va(proc_index, vadr, addr);
     for(i = 0; i < size; i++){
       rmv_ptbl_entry(proc_index, pde_index, i);
@@ -74,4 +75,12 @@ unsigned int alloc_ptbl(unsigned int proc_index, unsigned int vadr)
 void free_ptbl(unsigned int proc_index, unsigned int vadr)
 {
   // TODO
+  unsigned int addr, pde_index, pte_index, i, pde, size = 1024;
+  pde_index = (vadr & DIR_MASK)>>DIR_SHIFT;
+  pde = get_pdir_entry_by_va(proc_index, vadr);
+  rmv_pdir_entry_by_va(proc_index, vadr);
+
+  addr = pde>>12;
+  addr = pde<<12;
+  container_free(proc_index, addr);
 }
