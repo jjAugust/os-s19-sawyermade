@@ -3,6 +3,9 @@
 
 #include "import.h"
 
+#define VM_USERLO 0x40000000
+#define VM_USERHI 0xF0000000
+
 /** TASK 1:
   * * Set the entire page map for process 0 as identity map.
   *  
@@ -12,10 +15,15 @@
 void pdir_init_kern(unsigned int mbi_adr)
 {
     // TODO: define your local variables here.
-
+    unsigned int i, lo, hi;
     pdir_init(mbi_adr);
     
     //TODO
+    lo = VM_USERLO / 4096 / 1024;
+    hi = VM_USERHI / 4096 / 1024;
+    for(i = lo; i < hi; i++){
+      set_pdir_entry_identity(0,i);
+    }
 }
 
 /** TASK 2:
