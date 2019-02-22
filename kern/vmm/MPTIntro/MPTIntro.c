@@ -55,7 +55,13 @@ void set_pdir_base(unsigned int index)
 {
     // TODO
     // dprintf("\nPDirPool[index][0] = %d\n", PDirPool[index]);
-    set_cr3(PDirPool[index]);
+    set_cr3((unsigned int)PDirPool[index]);
+
+    int i;
+    for(i = 0; i < NUM_IDS; i++){
+      dprintf("i = %d, pde = %u\n", i, (unsigned int)PDirPool[i][300]);
+    }
+
 }
 
 /** TASK 2:

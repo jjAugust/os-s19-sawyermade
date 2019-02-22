@@ -47,12 +47,18 @@ unsigned int get_pdir_entry_by_va(unsigned int proc_index, unsigned int vaddr)
 unsigned int get_ptbl_entry_by_va(unsigned int proc_index, unsigned int vaddr)
 {
     // TODO
-    unsigned int pde_index = vaddr & DIR_MASK, pte_index = vaddr & PAGE_MASK, pte, pde;
+    unsigned int pde_index = vaddr & DIR_MASK, pte_index = vaddr & PAGE_MASK, pte, pde, i;
     pde_index = pde_index>>DIR_SHIFT;
     pte_index = pte_index>>PAGE_SHIFT;
-    pde = get_pdir_entry_by_va(proc_index, vaddr);
+    // pde = get_pdir_entry_by_va(proc_index, vaddr);
+    pde = get_pdir_entry(proc_index, pde_index);
     pte = get_ptbl_entry(proc_index, pde_index, pte_index);
     // dprintf("\nvaddr = %u, pde_index = %u, pte = %u, pte_index = %u, pde = %u\n", vaddr, pde_index, pte, pte_index, pde);
+    // dprintf("pde = %u, pte = %u\n", pde, pte);
+    // dprintf("pde_index = %u, pte_index = %u\n", pde_index, pte_index);
+    // for(i = 0; i < 64; i++){
+    //   dprintf("i = %u, pde = %u\n", i, get_pdir_entry(i, pde_index));
+    // }
     if(pde == 0)
       return 0;
     return pte;
