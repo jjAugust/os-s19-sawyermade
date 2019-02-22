@@ -9,23 +9,23 @@ int MPTIntro_test1()
 {
   set_pdir_base(0);
   if ((unsigned int)PDirPool[0] != rcr3()) {
-    dprintf("test 1 failed.\n");
+    dprintf("test 1a failed.\n");
     return 1;
   }
   set_pdir_entry_identity(1, 1);
   set_pdir_entry(1, 2, 100);
   if (get_pdir_entry(1, 1) != (unsigned int)IDPTbl[1] +   7) {
-    dprintf("test 1 failed.\n");
+    dprintf("test 1b failed.\n");
     return 1;
   }
   if (get_pdir_entry(1, 2) != 409607) {
-    dprintf("test 1 failed.\n");
+    dprintf("test 1c failed.\n");
     return 1;
   }
   rmv_pdir_entry(1, 1);
   rmv_pdir_entry(1, 2);
   if (get_pdir_entry(1, 1) != 0 || get_pdir_entry(1, 2) != 0) {
-    dprintf("test 1 failed.\n");
+    dprintf("test 1d failed.\n");
     return 1;
   }
   dprintf("test 1 passed.\n");
@@ -36,13 +36,15 @@ int MPTIntro_test2()
 {
   set_pdir_entry(1, 1, 10000);
   set_ptbl_entry(1, 1, 1, 10000, 259);
+  // dprintf("%u\n", get_ptbl_entry(1, 1, 1));
   if (get_ptbl_entry(1, 1, 1) != 40960259) {
-    dprintf("test 2 failed.\n");
+    dprintf("test 2a failed.\n");
+    // dprintf("%u\n", get_ptbl_entry(1, 1, 1));
     return 1;
   }
   rmv_ptbl_entry(1, 1, 1);
   if (get_ptbl_entry(1, 1, 1) != 0) {
-    dprintf("test 2 failed.\n");
+    dprintf("test 2b failed.\n");
     return 1;
   }
   rmv_pdir_entry(1, 1);
@@ -67,6 +69,7 @@ int MPTIntro_test_own()
 {
   // TODO (optional)
   // dprintf("own test passed.\n");
+  // set_ptbl_entry_identity(1, 1, 7);
   return 0;
 }
 

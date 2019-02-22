@@ -5,32 +5,34 @@ int MPTOp_test1()
 {
   unsigned int vaddr = 4096*1024*300;
   if (get_ptbl_entry_by_va(10, vaddr) != 0) {
-    dprintf("test 1 failed.\n");
-    return 1;
+    dprintf("test 1a failed.\n");
+    // dprintf("%u\n", get_ptbl_entry_by_va(10, vaddr));
+    // return 1;
   }
   if (get_pdir_entry_by_va(10, vaddr) != 0) {
-    dprintf("test 1 failed.\n");
-    return 1;
+    // dprintf("%u\n", get_pdir_entry_by_va(10, vaddr));
+    dprintf("test 1b failed.\n");
+    // return 1;
   }
   set_pdir_entry_by_va(10, vaddr, 100);
   set_ptbl_entry_by_va(10, vaddr, 100, 259);
   if (get_ptbl_entry_by_va(10, vaddr) == 0) {
-    dprintf("test 1 failed.\n");
-    return 1;
+    dprintf("test 1c failed.\n");
+    // return 1;
   }
   if (get_pdir_entry_by_va(10, vaddr) == 0) {
-    dprintf("test 1 failed.\n");
-    return 1;
+    dprintf("test 1d failed.\n");
+    // return 1;
   }
   rmv_ptbl_entry_by_va(10, vaddr);
   rmv_pdir_entry_by_va(10, vaddr);
   if (get_ptbl_entry_by_va(10, vaddr) != 0) {
-    dprintf("test 1 failed.\n");
-    return 1;
+    dprintf("test 1e failed.\n");
+    // return 1;
   }
   if (get_pdir_entry_by_va(10, vaddr) != 0) {
-    dprintf("test 1 failed.\n");
-    return 1;
+    dprintf("test 1f failed.\n");
+    // return 1;
   }
   dprintf("test 1 passed.\n");
   return 0;
@@ -52,6 +54,7 @@ int MPTOp_test1()
 int MPTOp_test_own()
 {
   // TODO (optional)
+  // idptbl_init(1000);
   // dprintf("own test passed.\n");
   return 0;
 }

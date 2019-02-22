@@ -2,6 +2,14 @@
 
 #include "import.h"
 
+#define VM_USERLO 0x40000000
+#define VM_USERHI 0xF0000000
+#define DIR_MASK    0xffc00000
+#define PAGE_MASK   0x003ff000
+#define OFFSET_MASK 0x00000fff
+#define DIR_SHIFT   22
+#define PAGE_SHIFT  12
+
 /** TASK 1:
   * * For each process from id 0 to NUM_IDS -1,
   *   set the page directory entries so that the kernel portion of the map as identity map,
@@ -14,10 +22,21 @@
 void pdir_init(unsigned int mbi_adr)
 {
     // TODO: define your local variables here.
-
+    unsigned int i, j, low, hi, addr, size = 1024;
     idptbl_init(mbi_adr);
 
-    // TODO
+    // // TODO
+    low = VM_USERLO / 4096 / 1024;
+    hi = VM_USERHI / 4096 / 1024;
+    for(i = 0; i < NUM_IDS; i++){
+      for(j = 0; j < size; j++){
+        addr = j*size*4096;
+        if(addr < low || addr >= hi)
+          set_pdir_entry_identity(i,j);
+        else
+          rmv_pdir_entry(i,j);
+      }
+    }
 }
 
 /** TASK 2:
@@ -30,6 +49,17 @@ void pdir_init(unsigned int mbi_adr)
 unsigned int alloc_ptbl(unsigned int proc_index, unsigned int vadr)
 {
   // TODO
+  unsigned int addr, pde_index, pte_index, i, size = 1024;
+  addr = container_alloc(proc_index);
+  pde_index = (vadr & DIR_MASK)>>DIR_SHIFT;
+  if(addr > 0){
+    set_pdir_entry_by_va(proc_index, vadr, addr);
+    for(i = 0; i < size; i++){
+      rmv_ptbl_entry(proc_index, pde_index, i);
+    }
+    return addr;
+  }
+
   return 0;
 }
 

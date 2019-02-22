@@ -50,7 +50,7 @@ boot1main (uint32_t dev, mbr_t * mbr, bios_smap_t *smap)
 		i++;
 	}
 	if(i == 4)
-		panic("PANIC MOTHER FUCKER!!!!");
+		panic("Kernel Panic");
 
 	/* parse the memory map we extracted from the bios on the assembly side */
 	parse_e820(smap);
