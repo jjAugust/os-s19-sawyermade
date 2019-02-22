@@ -57,10 +57,10 @@ void set_pdir_base(unsigned int index)
     // dprintf("\nPDirPool[index][0] = %d\n", PDirPool[index]);
     set_cr3((unsigned int)PDirPool[index]);
 
-    int i;
-    for(i = 0; i < NUM_IDS; i++){
-      dprintf("i = %d, pde = %u\n", i, (unsigned int)PDirPool[i][300]);
-    }
+    // int i;
+    // for(i = 0; i < NUM_IDS; i++){
+    //   dprintf("i = %d, pde = %u\n", i, (unsigned int)PDirPool[i][300]);
+    // }
 
 }
 
@@ -176,7 +176,9 @@ void set_ptbl_entry_identity(unsigned int pde_index, unsigned int pte_index, uns
 {
     // TODO
     // IDPTbl[pde_index][pte_index] = ((pde_index*1024 + pte_index)*4096) | perm;
-    IDPTbl[pde_index][pte_index] = pde_index*1024*4096 | perm;
+    // IDPTbl[pde_index][pte_index] = pde_index*1024*4096 | perm;
+    // dprintf("perm = %u\n", perm);
+    IDPTbl[pde_index][pte_index] = pde_index*1024*4096 + perm;
     // dprintf("\nidptbl[0] addr = %u\n", (unsigned int)IDPTbl[0]);
 }
 

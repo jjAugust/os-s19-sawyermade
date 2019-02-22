@@ -11,6 +11,7 @@ int MPTComm_test1()
     if (i < 256 || i >= 960) {  
         // addr = i * 4096 * 1024;
         // val = get_ptbl_entry_by_va(10, addr);
+        // dprintf("val = %u\n", val);
         // dprintf("i = %d, val = %u, addr = %u, addr+p = %u\n", i, val, addr, addr+259);    // proc[10], dir[kern], check if identity map
       if (get_ptbl_entry_by_va(10, i * 4096 * 1024) != i * 4096 * 1024 + 259) {
         dprintf("test 1 failed.\n");

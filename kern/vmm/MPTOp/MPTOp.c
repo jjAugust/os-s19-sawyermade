@@ -50,8 +50,8 @@ unsigned int get_ptbl_entry_by_va(unsigned int proc_index, unsigned int vaddr)
     unsigned int pde_index = vaddr & DIR_MASK, pte_index = vaddr & PAGE_MASK, pte, pde, i;
     pde_index = pde_index>>DIR_SHIFT;
     pte_index = pte_index>>PAGE_SHIFT;
-    // pde = get_pdir_entry_by_va(proc_index, vaddr);
-    pde = get_pdir_entry(proc_index, pde_index);
+    pde = get_pdir_entry_by_va(proc_index, vaddr);
+    // pde = get_pdir_entry(proc_index, pde_index);
     pte = get_ptbl_entry(proc_index, pde_index, pte_index);
     // dprintf("\nvaddr = %u, pde_index = %u, pte = %u, pte_index = %u, pde = %u\n", vaddr, pde_index, pte, pte_index, pde);
     // dprintf("pde = %u, pte = %u\n", pde, pte);
@@ -113,7 +113,6 @@ void set_ptbl_entry_by_va(unsigned int proc_index, unsigned int vaddr, unsigned 
     unsigned int pde_index = vaddr & DIR_MASK, pte_index = vaddr & PAGE_MASK, pte, pde;
     pde_index = pde_index>>DIR_SHIFT;
     pte_index = pte_index>>PAGE_SHIFT;
-    pde = get_pdir_entry_by_va(proc_index, vaddr);
     pte = get_ptbl_entry(proc_index, pde_index, pte_index);
     set_ptbl_entry(proc_index, pde_index, pte_index, page_index, perm);
 }
@@ -133,13 +132,16 @@ void idptbl_init(unsigned int mbi_adr)
 {
     // TODO: define your local variables here.
     container_init(mbi_adr);
-
+    // dprintf("shit ored = %u, ored = %u\n", PTE_P | PTE_W | PTE_G, PTE_P | PTE_W);
     // TODO
-    unsigned int i, j, addr, size = 1024;
+    unsigned int i, j, addr, size = 1024, hi, lo;
+    lo = VM_USERLO / 4096 / 1024;
+    hi = VM_USERHI / 4096 / 1024;
     for(i = 0; i < size; i++){
       for(j = 0; j < size; j++){
-        addr = j*size*4096;
-        if(addr < VM_USERLO || addr >= VM_USERHI)
+        // addr = j*size*4096;
+        // if(addr < VM_USERLO || addr >= VM_USERHI)
+        if(i < lo || i >= hi)
           set_ptbl_entry_identity(i, j, PTE_P | PTE_W | PTE_G);
         else
           set_ptbl_entry_identity(i, j, PTE_P | PTE_W);

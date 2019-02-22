@@ -22,16 +22,15 @@
 void pdir_init(unsigned int mbi_adr)
 {
     // TODO: define your local variables here.
-    unsigned int i, j, low, hi, addr, size = 1024;
+    unsigned int i, j, lo, hi, addr, size = 1024;
     idptbl_init(mbi_adr);
 
-    // // TODO
-    low = VM_USERLO / 4096 / 1024;
+    // // // TODO
+    lo = VM_USERLO / 4096 / 1024;
     hi = VM_USERHI / 4096 / 1024;
     for(i = 0; i < NUM_IDS; i++){
       for(j = 0; j < size; j++){
-        addr = j*size*4096;
-        if(addr < low || addr >= hi)
+        if(j < lo || j >= hi)
           set_pdir_entry_identity(i,j);
         else
           rmv_pdir_entry(i,j);
@@ -49,7 +48,7 @@ void pdir_init(unsigned int mbi_adr)
 unsigned int alloc_ptbl(unsigned int proc_index, unsigned int vadr)
 {
   // TODO
-  unsigned int addr, pde_index, pte_index, i, size = 1024;
+  unsigned int addr, pde_index, i, size = 1024;
   addr = container_alloc(proc_index);
   pde_index = (vadr & DIR_MASK)>>DIR_SHIFT;
   if(addr > 0){
@@ -75,12 +74,9 @@ unsigned int alloc_ptbl(unsigned int proc_index, unsigned int vadr)
 void free_ptbl(unsigned int proc_index, unsigned int vadr)
 {
   // TODO
-  unsigned int addr, pde_index, pte_index, i, pde, size = 1024;
-  pde_index = (vadr & DIR_MASK)>>DIR_SHIFT;
+  unsigned int addr, i, pde;
   pde = get_pdir_entry_by_va(proc_index, vadr);
   rmv_pdir_entry_by_va(proc_index, vadr);
-
-  addr = pde>>12;
-  addr = pde<<12;
+  addr = pde & DIR_MASK;
   container_free(proc_index, addr);
 }
