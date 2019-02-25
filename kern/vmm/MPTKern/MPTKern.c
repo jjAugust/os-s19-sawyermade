@@ -48,9 +48,11 @@ void pdir_init_kern(unsigned int mbi_adr)
 unsigned int map_page(unsigned int proc_index, unsigned int vadr, unsigned int page_index, unsigned int perm)
 {   
   // TODO
-  unsigned int pde_index, pde, addr;
+  unsigned int pde_index, pde, addr=0;
   pde = get_pdir_entry_by_va(proc_index, vadr);
   if(pde > 0){
+    // pde_index = pde_index>>12;
+    // pde_index = pde_index<<12;
     pde_index = pde / PAGESIZE;
   }
   else{
@@ -60,7 +62,13 @@ unsigned int map_page(unsigned int proc_index, unsigned int vadr, unsigned int p
     }
   }
   set_ptbl_entry_by_va(proc_index, vadr, page_index, perm);
-  return get_pdir_entry_by_va(proc_index, vadr);
+  // return get_pdir_entry_by_va(proc_index, vadr);
+  // return get_ptbl_entry_by_va(proc_index, vadr);
+  // return pde_index;
+  if(addr != 0)
+    return addr;
+  else
+    return get_pdir_entry_by_va(proc_index, vadr);
 }
 
 /** TASK 3:
@@ -81,5 +89,5 @@ unsigned int unmap_page(unsigned int proc_index, unsigned int vadr)
     rmv_ptbl_entry_by_va(proc_index, vadr);
   }
 
-  return 0;
+  return pte;
 }   

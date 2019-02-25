@@ -5,5 +5,4 @@
 #rm project0.img
 ##Project1
 make clean
-make -j8
-make qemu-nox
+make -j8 TEST=1

@@ -6,6 +6,7 @@
 
 #define PT_PERM_UP 0
 #define PT_PERM_PTU (PTE_P | PTE_W | PTE_U)
+#define DIR_MASK    0xffc00000
 
 /** ASSIGNMENT INFO:
   * - In this part of the kernel, we will be implementing Virtual Memory Management (VMM) with 
@@ -84,7 +85,7 @@ void set_pdir_entry(unsigned int proc_index, unsigned int pde_index, unsigned in
 {
     // TODO
     // PDirPool[page_index] = IDPTbl[proc_index][pde_index];
-    PDirPool[proc_index][pde_index] = (char*)(page_index<<12 | PT_PERM_PTU);
+    PDirPool[proc_index][pde_index] = (char*)((page_index<<12) | PT_PERM_PTU);
     // dprintf("\nPDirPool[proc][pde] = %u\n", PDirPool[proc_index][pde_index]);
 }   
 
@@ -127,15 +128,26 @@ unsigned int get_ptbl_entry(unsigned int proc_index, unsigned int pde_index, uns
 {   
     // TODO
     // dprintf("\nPDir = %u\n", (unsigned int)PDirPool[proc_index][pde_index + pte_index*4]);
-    unsigned int* val;
-    unsigned int frame = (unsigned int)PDirPool[proc_index][pde_index]>>12;
-    frame += 4*pte_index;
-    frame = frame<<12;
-    val = (unsigned int*)frame;
+    // unsigned int* val;
+    // unsigned int frame = (unsigned int)PDirPool[proc_index][pde_index]>>12;
+    // frame += 4*pte_index;
+    // frame = frame<<12;
+    // // frame += 4*pte_index;
+    // val = (unsigned int*)frame;
 
-    // dprintf("\nval = %u\n", *val);
-    // return IDPTbl[pde_index][pte_index] = ;
-    return *val;
+    // // dprintf("\nval = %u\n", *val);
+    // // return IDPTbl[pde_index][pte_index] = ;
+    // return *val;
+    // unsigned int* frame = (unsigned int*)PDirPool[proc_index][pde_index];
+    // frame = frame>>12;
+    // frame = frame<<12;
+    // return frame[pte_index];
+    unsigned int* frame;
+    unsigned int frameNum = (unsigned int)PDirPool[proc_index][pde_index];
+    frameNum = frameNum>>12;
+    frameNum = frameNum<<12;
+    frame = (unsigned int*)frameNum;
+    return frame[pte_index];
 }
 
 /** TASK 7:
@@ -146,13 +158,23 @@ unsigned int get_ptbl_entry(unsigned int proc_index, unsigned int pde_index, uns
 void set_ptbl_entry(unsigned int proc_index, unsigned int pde_index, unsigned int pte_index, unsigned int page_index, unsigned int perm)
 {   
     // TODO
-    unsigned int* val;
-    unsigned int frame = (unsigned int)PDirPool[proc_index][pde_index]>>12;
-    frame += 4*pte_index;
-    frame = frame<<12;
-    val = (unsigned int*)frame;
-    *val = page_index<<12 | perm;
+    // unsigned int* val;
+    // unsigned int frame = (unsigned int)PDirPool[proc_index][pde_index]>>12;
+    // frame += 4*pte_index;
+    // frame = frame<<12;
+    // val = (unsigned int*)frame;
+    // *val = page_index<<12 | perm;
     // dprintf("\nval = %u\n", *val);
+    // unsigned int* frame = (unsigned int*)PDirPool[proc_index][pde_index];
+    // frame = frame>>12;
+    // frame = frame<<12;
+    // frame[pte_index] = (page_index<<12) | perm;
+    unsigned int* frame;
+    unsigned int frameNum = (unsigned int)PDirPool[proc_index][pde_index];
+    frameNum = frameNum>>12;
+    frameNum = frameNum<<12;
+    frame = (unsigned int*)frameNum;
+    frame[pte_index] = (page_index<<12) | perm;
 }   
 
 /** TASK 8:
@@ -178,8 +200,9 @@ void set_ptbl_entry_identity(unsigned int pde_index, unsigned int pte_index, uns
     // IDPTbl[pde_index][pte_index] = ((pde_index*1024 + pte_index)*4096) | perm;
     // IDPTbl[pde_index][pte_index] = pde_index*1024*4096 | perm;
     // dprintf("perm = %u\n", perm);
-    IDPTbl[pde_index][pte_index] = pde_index*1024*4096 + perm;
+    // IDPTbl[pde_index][pte_index] = pde_index*1024*4096 + perm;
     // dprintf("\nidptbl[0] addr = %u\n", (unsigned int)IDPTbl[0]);
+    IDPTbl[pde_index][pte_index] = (pde_index*1024 + pte_index)*4096 + perm;
 }
 
 /** TASK 9:
@@ -190,10 +213,16 @@ void set_ptbl_entry_identity(unsigned int pde_index, unsigned int pte_index, uns
 void rmv_ptbl_entry(unsigned int proc_index, unsigned int pde_index, unsigned int pte_index)
 {
     // TODO
-    unsigned int* val;
-    unsigned int frame = (unsigned int)PDirPool[proc_index][pde_index]>>12;
-    frame += 4*pte_index;
-    frame = frame<<12;
-    val = (unsigned int*)frame;
-    *val = 0;
+    // unsigned int* val;
+    // unsigned int frame = (unsigned int)PDirPool[proc_index][pde_index]>>12;
+    // frame += 4*pte_index;
+    // frame = frame<<12;
+    // val = (unsigned int*)frame;
+    // *val = 0;
+    unsigned int* frame;
+    unsigned int frameNum = (unsigned int)PDirPool[proc_index][pde_index];
+    frameNum = frameNum>>12;
+    frameNum = frameNum<<12;
+    frame = (unsigned int*)frameNum;
+    frame[pte_index] = 0;
 }
