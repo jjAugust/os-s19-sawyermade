@@ -202,7 +202,7 @@ void set_ptbl_entry_identity(unsigned int pde_index, unsigned int pte_index, uns
     // dprintf("perm = %u\n", perm);
     // IDPTbl[pde_index][pte_index] = pde_index*1024*4096 + perm;
     // dprintf("\nidptbl[0] addr = %u\n", (unsigned int)IDPTbl[0]);
-    IDPTbl[pde_index][pte_index] = (pde_index*1024 + pte_index)*4096 + perm;
+    IDPTbl[pde_index][pte_index] = (pde_index*1024 + pte_index)*4096 | perm;
 }
 
 /** TASK 9:

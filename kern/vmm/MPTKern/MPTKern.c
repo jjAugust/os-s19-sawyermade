@@ -48,12 +48,12 @@ void pdir_init_kern(unsigned int mbi_adr)
 unsigned int map_page(unsigned int proc_index, unsigned int vadr, unsigned int page_index, unsigned int perm)
 {   
   // TODO
-  unsigned int pde_index, pde, addr=0;
+  unsigned int pde_index=0, pde=0, addr=0;
   pde = get_pdir_entry_by_va(proc_index, vadr);
   if(pde > 0){
-    // pde_index = pde_index>>12;
-    // pde_index = pde_index<<12;
-    pde_index = pde / PAGESIZE;
+    pde_index = pde>>12;
+    // pde_index = pde<<12;
+    // pde_index = pde / PAGESIZE;
   }
   else{
     addr = alloc_ptbl(proc_index, vadr);
@@ -65,10 +65,11 @@ unsigned int map_page(unsigned int proc_index, unsigned int vadr, unsigned int p
   // return get_pdir_entry_by_va(proc_index, vadr);
   // return get_ptbl_entry_by_va(proc_index, vadr);
   // return pde_index;
+  // dprintf("\npde, pde_index, addr = %u, %u, %u\n", pde, pde_index, addr);
   if(addr != 0)
     return addr;
   else
-    return get_pdir_entry_by_va(proc_index, vadr);
+    return pde_index;
 }
 
 /** TASK 3:
@@ -82,10 +83,10 @@ unsigned int map_page(unsigned int proc_index, unsigned int vadr, unsigned int p
 unsigned int unmap_page(unsigned int proc_index, unsigned int vadr)
 {
   // TODO
-  unsigned int pte;
+  unsigned int pte=0;
   pte = get_ptbl_entry_by_va(proc_index, vadr);
   // dprintf("pte = %u\n", pte);
-  if(pte){
+  if(pte != 0){
     rmv_ptbl_entry_by_va(proc_index, vadr);
   }
 
