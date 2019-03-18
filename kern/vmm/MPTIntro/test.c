@@ -37,12 +37,12 @@ int MPTIntro_test2()
   set_pdir_entry(1, 1, 10000);
   set_ptbl_entry(1, 1, 1, 10000, 259);
   if (get_ptbl_entry(1, 1, 1) != 40960259) {
-    dprintf("test 2 failed.\n");
+    dprintf("test 2-a failed with get_ptbl_entry = %d.\n", get_ptbl_entry(1, 1, 1));
     return 1;
   }
   rmv_ptbl_entry(1, 1, 1);
   if (get_ptbl_entry(1, 1, 1) != 0) {
-    dprintf("test 2 failed.\n");
+    dprintf("test 2-b failed.\n");
     return 1;
   }
   rmv_pdir_entry(1, 1);

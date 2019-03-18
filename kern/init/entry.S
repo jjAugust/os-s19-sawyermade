@@ -29,8 +29,8 @@ start:
 	movw	$0x1234,0x472
 
 	/* clear EFLAGS */
-	pushl	$0x2  // EFLAGS register: Bit 1 is reserved and must always be set to 1. (0x2 = 10 in binary, setting the reserved bit 1 and rest to 0)
-	popfl         // pop the newly pushed value into EFLAGS register.
+	pushl	$0x2
+	popfl
 
 	/* prepare the kernel stack  */
 	movl	$0x0,%ebp

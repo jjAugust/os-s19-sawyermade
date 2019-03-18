@@ -6,8 +6,8 @@
 int MPTComm_test1()
 {
   int i;
-  for (i = 0; i < 1024; i ++) {     // kernel portion
-    if (i < 256 || i >= 960) {      // proc[10], dir[kern], check if identity map
+  for (i = 0; i < 1024; i ++) {
+    if (i < 256 || i >= 960) {
       if (get_ptbl_entry_by_va(10, i * 4096 * 1024) != i * 4096 * 1024 + 259) {
         dprintf("test 1 failed.\n");
         return 1;

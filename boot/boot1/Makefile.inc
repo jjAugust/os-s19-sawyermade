@@ -17,7 +17,8 @@ $(OBJDIR)/boot/%.o: boot/boot1/%.c
 	@echo + cc[BOOT] $<
 	@mkdir -p $(@D)
 ifdef SOL
-	$(V)echo "Copying solution boot1: " + $(notdir $@)
+	$(V)echo "Copying solution boot1main"
+#	$(V)cp $(SAMPLEDIR)/boot/boot1main.o $@
 	$(V)cp $(SAMPLEDIR)/boot/$(notdir $@) $@
 else
 	$(V)$(CC) -nostdinc $(BOOT_CFLAGS) -Iboot/boot1 -Os -c -o $@ $<
@@ -27,7 +28,7 @@ $(OBJDIR)/boot/%.o: boot/boot1/%.S
 	@echo + as[BOOT] $<
 	@mkdir -p $(@D)
 ifdef SOL
-	$(V)echo "Copying solution boot1: " + $(notdir $@)
+	$(V)echo "Copying solution boot1"
 	$(V)cp $(SAMPLEDIR)/boot/$(notdir $@) $@
 else
 	$(V)$(CC) -nostdinc $(BOOT_CFLAGS) -Os -c -o $@ $<

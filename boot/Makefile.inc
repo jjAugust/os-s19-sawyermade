@@ -27,9 +27,17 @@ endif
 BOOT_BINFILES	+= $(OBJDIR)/boot/boot0
 BOOT_BINFILES	+= $(OBJDIR)/boot/boot1
 
+#BOOT_BINFILES	+= $(SAMPLEDIR)/boot/boot0
+#BOOT_BINFILES	+= $(SAMPLEDIR)/boot/boot1
+
 # Sub-makefiles for the bootloader
 include $(BOOT_DIR)/boot0/Makefile.inc
 include $(BOOT_DIR)/boot1/Makefile.inc
+
+#ifdef SOL
+#@cp $(SAMPLEDIR)/boot/boot0 $(OBJDIR)/boot/boot0
+#@cp $(SAMPLEDIR)/boot/boot1 $(OBJDIR)/boot/boot1
+#endif
 
 # Top-level target to build the bootloader
 boot: $(BOOT_BINFILES)

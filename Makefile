@@ -35,7 +35,7 @@ OBJDIR		:= $(TOP)/obj
 UTILSDIR	:= $(TOP)/misc
 TESTDIR		:= $(TOP)/test
 OBJDIRS		:=
-SAMPLEDIR	:= $(TOP)/.samples
+SAMPLEDIR       := $(TOP)/samples
 
 # Compiler and Linker
 CC		:= $(GCCPREFIX)gcc
@@ -89,7 +89,9 @@ BOCHS_OPT	:= -q
 GDBPORT	:= $(shell expr `id -u` % 5000 + 25000)
  
 # qemu
-QEMU		:= qemu-system-x86_64
+# at: For updated versions of qemu, need to use i386
+#QEMU		:= qemu-system-x86_64
+QEMU		:= qemu-system-i386
 QEMUOPTS	:= -smp 1 -hda $(CERTIKOS_IMG) -serial mon:stdio -gdb tcp::$(GDBPORT) -m 2048 -k en-us
 QEMUOPTS_KVM	:= -cpu host -enable-kvm
 QEMUOPTS_BIOS	:= -L $(UTILSDIR)/qemu/

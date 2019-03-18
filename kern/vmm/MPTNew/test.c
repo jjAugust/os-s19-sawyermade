@@ -1,4 +1,7 @@
 #include <lib/debug.h>
+#include <pmm/MContainer/export.h>
+#include <vmm/MPTOp/export.h>
+
 #include "export.h"
 
 int MPTNew_test1()

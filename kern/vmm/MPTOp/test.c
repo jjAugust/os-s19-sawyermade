@@ -5,31 +5,31 @@ int MPTOp_test1()
 {
   unsigned int vaddr = 4096*1024*300;
   if (get_ptbl_entry_by_va(10, vaddr) != 0) {
-    dprintf("test 1 failed.\n");
+    dprintf("test 1-a failed with value: %d.\n", get_ptbl_entry_by_va(10, vaddr));
     return 1;
   }
   if (get_pdir_entry_by_va(10, vaddr) != 0) {
-    dprintf("test 1 failed.\n");
+    dprintf("test 1-b failed.\n");
     return 1;
   }
   set_pdir_entry_by_va(10, vaddr, 100);
   set_ptbl_entry_by_va(10, vaddr, 100, 259);
   if (get_ptbl_entry_by_va(10, vaddr) == 0) {
-    dprintf("test 1 failed.\n");
+    dprintf("test 1-c failed.\n");
     return 1;
   }
   if (get_pdir_entry_by_va(10, vaddr) == 0) {
-    dprintf("test 1 failed.\n");
+    dprintf("test 1-d failed.\n");
     return 1;
   }
   rmv_ptbl_entry_by_va(10, vaddr);
   rmv_pdir_entry_by_va(10, vaddr);
   if (get_ptbl_entry_by_va(10, vaddr) != 0) {
-    dprintf("test 1 failed.\n");
+    dprintf("test 1-e failed.\n");
     return 1;
   }
   if (get_pdir_entry_by_va(10, vaddr) != 0) {
-    dprintf("test 1 failed.\n");
+    dprintf("test 1-f failed.\n");
     return 1;
   }
   dprintf("test 1 passed.\n");
