@@ -23,8 +23,15 @@ extern char STACK_LOC[NUM_IDS][PAGESIZE] gcc_aligned(PAGESIZE);
   *  Hint 3:
   *  - Return the child pid.
   */
+// unsigned int alloc_mem_quota(unsigned int id, unsigned int quota);
+// void kctx_set_esp(unsigned int pid, void *esp);
+// void kctx_set_eip(unsigned int pid, void *eip);
 unsigned int kctx_new(void *entry, unsigned int id, unsigned int quota)
 {
   // TODO
-  return 0;
+  unsigned int pid = alloc_mem_quota(id, quota);
+  kctx_set_eip(pid, entry);
+  kctx_set_esp(pid, &STACK_LOC[pid][PAGESIZE-1]);
+
+  return pid;
 }
