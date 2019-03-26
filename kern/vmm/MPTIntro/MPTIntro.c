@@ -6,6 +6,7 @@
 
 #define PT_PERM_UP 0
 #define PT_PERM_PTU (PTE_P | PTE_W | PTE_U)
+#define DIR_MASK    0xffc00000
 
 /** ASSIGNMENT INFO:
   * - In this part of the kernel, we will be implementing Virtual Memory Management (VMM) with 
@@ -28,7 +29,7 @@
   * - The PAGESIZE for VMM is 4096 bytes. 
   * - Each Page Table Entry (pte) is 4 bytes. Therefore, each page can hold 4096/4 = 1024 pte.
   * Page Table Entry Format:
-  * 
+  * 20+9+3=32
   * |31                         12|11          |2   |1   |0  | 
   * |-----------------------------|------------|----|----|---|
   * | Page Frame Address 31..12   |  Flags     |U/S |R/W |P  |
@@ -54,6 +55,14 @@ unsigned int IDPTbl[1024][1024] gcc_aligned(PAGESIZE);
 void set_pdir_base(unsigned int index)
 {
     // TODO
+    // dprintf("\nPDirPool[index][0] = %d\n", PDirPool[index]);
+    set_cr3((unsigned int)PDirPool[index]);
+
+    // int i;
+    // for(i = 0; i < NUM_IDS; i++){
+    //   dprintf("i = %d, pde = %u\n", i, (unsigned int)PDirPool[i][300]);
+    // }
+
 }
 
 /** TASK 2:
@@ -63,7 +72,7 @@ void set_pdir_base(unsigned int index)
 unsigned int get_pdir_entry(unsigned int proc_index, unsigned int pde_index)
 {
     // TODO
-    return 0;
+    return (unsigned int)PDirPool[proc_index][pde_index];
 }   
 
 /** TASK 3:
@@ -75,6 +84,9 @@ unsigned int get_pdir_entry(unsigned int proc_index, unsigned int pde_index)
 void set_pdir_entry(unsigned int proc_index, unsigned int pde_index, unsigned int page_index)
 {
     // TODO
+    // PDirPool[page_index] = IDPTbl[proc_index][pde_index];
+    PDirPool[proc_index][pde_index] = (char*)((page_index<<12) | PT_PERM_PTU);
+    // dprintf("\nPDirPool[proc][pde] = %u\n", PDirPool[proc_index][pde_index]);
 }   
 
 /** TASK 4:
@@ -87,6 +99,9 @@ void set_pdir_entry(unsigned int proc_index, unsigned int pde_index, unsigned in
 void set_pdir_entry_identity(unsigned int proc_index, unsigned int pde_index)
 {   
     // TODO
+    PDirPool[proc_index][pde_index] = (char*)((unsigned int)IDPTbl[pde_index] | PT_PERM_PTU);
+    // dprintf("\nIDPTbl[pde_index] = %u\n", (unsigned int)IDPTbl[pde_index] + 7);
+    // dprintf("\nval = %u\n", ((unsigned int)IDPTbl[pde_index] | PT_PERM_PTU));
 }   
 
 /** TASK 5:
@@ -97,6 +112,7 @@ void set_pdir_entry_identity(unsigned int proc_index, unsigned int pde_index)
 void rmv_pdir_entry(unsigned int proc_index, unsigned int pde_index)
 {
     // TODO
+    PDirPool[proc_index][pde_index] = (char*)PT_PERM_UP;
 }   
 
 /** TASK 6:
@@ -111,7 +127,27 @@ void rmv_pdir_entry(unsigned int proc_index, unsigned int pde_index)
 unsigned int get_ptbl_entry(unsigned int proc_index, unsigned int pde_index, unsigned int pte_index)
 {   
     // TODO
-    return 0;
+    // dprintf("\nPDir = %u\n", (unsigned int)PDirPool[proc_index][pde_index + pte_index*4]);
+    // unsigned int* val;
+    // unsigned int frame = (unsigned int)PDirPool[proc_index][pde_index]>>12;
+    // frame += 4*pte_index;
+    // frame = frame<<12;
+    // // frame += 4*pte_index;
+    // val = (unsigned int*)frame;
+
+    // // dprintf("\nval = %u\n", *val);
+    // // return IDPTbl[pde_index][pte_index] = ;
+    // return *val;
+    // unsigned int* frame = (unsigned int*)PDirPool[proc_index][pde_index];
+    // frame = frame>>12;
+    // frame = frame<<12;
+    // return frame[pte_index];
+    unsigned int* frame;
+    unsigned int frameNum = (unsigned int)PDirPool[proc_index][pde_index];
+    frameNum = frameNum>>12;
+    frameNum = frameNum<<12;
+    frame = (unsigned int*)frameNum;
+    return frame[pte_index];
 }
 
 /** TASK 7:
@@ -122,6 +158,23 @@ unsigned int get_ptbl_entry(unsigned int proc_index, unsigned int pde_index, uns
 void set_ptbl_entry(unsigned int proc_index, unsigned int pde_index, unsigned int pte_index, unsigned int page_index, unsigned int perm)
 {   
     // TODO
+    // unsigned int* val;
+    // unsigned int frame = (unsigned int)PDirPool[proc_index][pde_index]>>12;
+    // frame += 4*pte_index;
+    // frame = frame<<12;
+    // val = (unsigned int*)frame;
+    // *val = page_index<<12 | perm;
+    // dprintf("\nval = %u\n", *val);
+    // unsigned int* frame = (unsigned int*)PDirPool[proc_index][pde_index];
+    // frame = frame>>12;
+    // frame = frame<<12;
+    // frame[pte_index] = (page_index<<12) | perm;
+    unsigned int* frame;
+    unsigned int frameNum = (unsigned int)PDirPool[proc_index][pde_index];
+    frameNum = frameNum>>12;
+    frameNum = frameNum<<12;
+    frame = (unsigned int*)frameNum;
+    frame[pte_index] = (page_index<<12) | perm;
 }   
 
 /** TASK 8:
@@ -144,6 +197,12 @@ void set_ptbl_entry(unsigned int proc_index, unsigned int pde_index, unsigned in
 void set_ptbl_entry_identity(unsigned int pde_index, unsigned int pte_index, unsigned int perm)
 {
     // TODO
+    // IDPTbl[pde_index][pte_index] = ((pde_index*1024 + pte_index)*4096) | perm;
+    // IDPTbl[pde_index][pte_index] = pde_index*1024*4096 | perm;
+    // dprintf("perm = %u\n", perm);
+    // IDPTbl[pde_index][pte_index] = pde_index*1024*4096 + perm;
+    // dprintf("\nidptbl[0] addr = %u\n", (unsigned int)IDPTbl[0]);
+    IDPTbl[pde_index][pte_index] = (pde_index*1024 + pte_index)*4096 | perm;
 }
 
 /** TASK 9:
@@ -154,4 +213,16 @@ void set_ptbl_entry_identity(unsigned int pde_index, unsigned int pte_index, uns
 void rmv_ptbl_entry(unsigned int proc_index, unsigned int pde_index, unsigned int pte_index)
 {
     // TODO
+    // unsigned int* val;
+    // unsigned int frame = (unsigned int)PDirPool[proc_index][pde_index]>>12;
+    // frame += 4*pte_index;
+    // frame = frame<<12;
+    // val = (unsigned int*)frame;
+    // *val = 0;
+    unsigned int* frame;
+    unsigned int frameNum = (unsigned int)PDirPool[proc_index][pde_index];
+    frameNum = frameNum>>12;
+    frameNum = frameNum<<12;
+    frame = (unsigned int*)frameNum;
+    frame[pte_index] = 0;
 }

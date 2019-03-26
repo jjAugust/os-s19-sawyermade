@@ -52,6 +52,7 @@ int MPTOp_test1()
 int MPTOp_test_own()
 {
   // TODO (optional)
+  // idptbl_init(1000);
   // dprintf("own test passed.\n");
   return 0;
 }

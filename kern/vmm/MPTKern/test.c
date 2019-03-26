@@ -8,25 +8,26 @@ int MPTKern_test1()
   unsigned int vaddr = 4096*1024*300;
   container_split(0, 100);
   if (get_ptbl_entry_by_va(1, vaddr) != 0) {
-    dprintf("test 1 failed.\n");
+    dprintf("test 1a failed.\n");
     return 1;
   }
   if (get_pdir_entry_by_va(1, vaddr) != 0) {
-    dprintf("test 1 failed.\n");
+    dprintf("test 1b failed.\n");
     return 1;
   }
   map_page(1, vaddr, 100, 7);
   if (get_ptbl_entry_by_va(1, vaddr) == 0) {
-    dprintf("test 1 failed.\n");
+    dprintf("%u\n", get_ptbl_entry_by_va(1, vaddr));
+    dprintf("test 1c failed.\n");
     return 1;
   }
   if (get_pdir_entry_by_va(1, vaddr) == 0) {
-    dprintf("test 1 failed.\n");
+    dprintf("test 1d failed.\n");
     return 1;
   }
   unmap_page(1, vaddr);
   if (get_ptbl_entry_by_va(1, vaddr) != 0) {
-    dprintf("test 1 failed.\n");
+    dprintf("test 1e failed.\n");
     return 1;
   }
   dprintf("test 1 passed.\n");
@@ -35,9 +36,12 @@ int MPTKern_test1()
 
 int MPTKern_test2()
 {
-  unsigned int i;
+  unsigned int i, val;
   for (i = 256; i < 960; i ++) {
+    // val = get_ptbl_entry_by_va(0, i * 4096 * 1024L);
+    // if (val != i * 4096 * 1024L + 3) {
     if (get_ptbl_entry_by_va(0, i * 4096 * 1024L) != i * 4096 * 1024L + 3) {
+      // dprintf("%u == %u\n", i * 4096 * 1024L + 3, val);
       dprintf("test 2 failed.\n");
       return 1;
     }
