@@ -139,5 +139,4 @@ trap_return:
 	popl %es 
 	popl %ds 
 	addl $8, %esp
-
-	ret 
+	iret 

@@ -24,7 +24,7 @@ unsigned int thread_spawn(void *entry, unsigned int id, unsigned int quota)
   // TODO
   unsigned int chid = kctx_new(entry, id, quota);
   tcb_set_state(chid, TSTATE_READY);
-  tqueue_enqueue(chid, NUM_IDS);
+  tqueue_enqueue(NUM_IDS, chid);
   
   return chid;
 }
@@ -51,9 +51,9 @@ void thread_yield(void)
   // ...
   curid = get_curid();
   tcb_set_state(curid, TSTATE_READY);
-  tqueue_enqueue(curid, NUM_IDS);
-  
+  tqueue_enqueue(NUM_IDS, curid);
   next = tqueue_dequeue(NUM_IDS);
+
   // Check to make sure there is another thread to yield to.
   if (next != NUM_IDS) {
     // TODO
@@ -62,6 +62,7 @@ void thread_yield(void)
     set_curid(next);
 
     // This performs the switch.
-    kctx_switch(curid, next);
+    if(next != curid)
+      kctx_switch(curid, next);
   } 
 }

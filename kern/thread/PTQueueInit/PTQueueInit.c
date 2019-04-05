@@ -11,10 +11,12 @@
 void tqueue_init(unsigned int mbi_addr)
 {
   // TODO: define your local variables here.
-
+  int i;
 	tcb_init(mbi_addr);
 
   // TODO
+  for(i = 0; i < NUM_IDS; i++)
+    tqueue_init_at_id(i);
 }
 
 /** TASK 2:
@@ -39,6 +41,17 @@ void tqueue_init(unsigned int mbi_addr)
 void tqueue_enqueue(unsigned int chid, unsigned int pid)
 {
   // TODO
+  unsigned int tail = tqueue_get_tail(chid);
+  tqueue_set_tail(chid,pid);
+
+  if(tail == NUM_IDS)
+    tqueue_set_head(chid, pid);
+
+  else{
+    tcb_set_next(tail, pid);
+    tcb_set_prev(pid, tail);
+    tcb_set_next(pid, NUM_IDS);
+  }
 }
 
 /** TASK 3:
@@ -58,7 +71,24 @@ void tqueue_enqueue(unsigned int chid, unsigned int pid)
 unsigned int tqueue_dequeue(unsigned int chid)
 {
   // TODO
-  return 0;
+  unsigned int head = tqueue_get_head(chid), next = tcb_get_next(head);
+
+  if(head == NUM_IDS)
+    return NUM_IDS;
+
+  else{
+    if(next == NUM_IDS)
+      tqueue_set_tail(chid, next);
+
+    else
+      tcb_set_prev(next, NUM_IDS);
+
+    tqueue_set_head(chid, next);
+    tcb_set_next(head, NUM_IDS);
+    tcb_set_prev(head, NUM_IDS);
+
+    return head;
+  }
 }
 
 /** TASK 4:
@@ -76,4 +106,35 @@ unsigned int tqueue_dequeue(unsigned int chid)
 void tqueue_remove(unsigned int chid, unsigned int pid)
 {
   // TODO
+  unsigned int next = tcb_get_next(pid), prev = tcb_get_prev(pid);
+
+  if(next == prev && prev == NUM_IDS){
+    tqueue_set_head(chid, next);
+    tqueue_set_tail(chid, next);
+    tcb_set_next(pid, next);
+    tcb_set_prev(pid, next);
+    return;
+  }
+
+  if(next == NUM_IDS){
+    tqueue_set_tail(chid,next);
+    tcb_set_next(prev, next);
+    tcb_set_next(pid, next);
+    tcb_set_prev(pid, next);
+    return;
+  }
+
+  if(prev == NUM_IDS){
+    tqueue_set_head(chid, next);
+    tcb_set_prev(next, prev);
+    tcb_set_next(pid, prev);
+    tcb_set_prev(pid, prev);
+    return;
+  }
+
+  tcb_set_next(prev, next);
+  tcb_set_prev(next, prev);
+  tcb_set_next(pid, NUM_IDS);
+  tcb_set_prev(pid, NUM_IDS);
+  return;
 }

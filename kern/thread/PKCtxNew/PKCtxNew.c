@@ -31,7 +31,7 @@ unsigned int kctx_new(void *entry, unsigned int id, unsigned int quota)
   // TODO
   unsigned int pid = alloc_mem_quota(id, quota);
   kctx_set_eip(pid, entry);
-  kctx_set_esp(pid, &STACK_LOC[pid][PAGESIZE-1]);
+  kctx_set_esp(pid, (void*)&STACK_LOC[pid][PAGESIZE-1]);
 
   return pid;
 }
