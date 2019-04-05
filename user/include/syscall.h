@@ -45,10 +45,10 @@ sys_spawn(uintptr_t exec, unsigned int quota)
   unsigned int a, b;
 
   asm volatile(
-    "int %2"
+    "int %2" 
     :
     "=a" (a),
-    "=b" (b),
+    "=b" (b)
     :
     "i" (T_SYSCALL),
     "a" (SYS_spawn),
@@ -76,6 +76,7 @@ sys_yield(void)
 	// TODO
   asm volatile(
     "int %0"
+    :
     :
     "i" (T_SYSCALL),
     "a" (SYS_yield)
