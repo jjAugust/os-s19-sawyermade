@@ -171,5 +171,5 @@ void trap (tf_t *tf)
       syscall_dispatch();
 
 	  // Trap handled: call proc_start_user() to initiate return from trap.
-    proc_start_user (); 
+    proc_start_user(); 
 }

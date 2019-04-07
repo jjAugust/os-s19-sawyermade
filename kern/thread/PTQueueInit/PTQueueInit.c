@@ -11,7 +11,7 @@
 void tqueue_init(unsigned int mbi_addr)
 {
   // TODO: define your local variables here.
-  int i;
+  unsigned int i;
 	tcb_init(mbi_addr);
 
   // TODO
@@ -134,5 +134,4 @@ void tqueue_remove(unsigned int chid, unsigned int pid)
   tcb_set_prev(next, prev);
   tcb_set_next(pid, NUM_IDS);
   tcb_set_prev(pid, NUM_IDS);
-  return;
 }

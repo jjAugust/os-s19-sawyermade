@@ -95,17 +95,17 @@ void sys_spawn(void)
 
     case 3: proc = proc_create(_binary___obj_user_pingpong_ding_start, quota); break;
 
-    default : break;
+    default : proc = NUM_IDS; break;
   }
 
-  if(proc != NUM_IDS){
-    syscall_set_errno(E_SUCC);
-    syscall_set_retval1(proc);
+  if(proc == NUM_IDS){
+    syscall_set_errno(E_INVAL_PID);
+    syscall_set_retval1(NUM_IDS);
   }
 
   else{
-    syscall_set_errno(E_INVAL_PID);
-    syscall_set_retval1(NUM_IDS);
+    syscall_set_errno(E_SUCC);
+    syscall_set_retval1(proc);
   }
 }
 
