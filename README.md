@@ -51,7 +51,12 @@ $ git push -f origin v1
 $ bash install_deps.sh
 ```
 ### Run: 
-Builds img via build.sh, runs the file in qemu, and cleans everything up on completion.
+Makes and runs the file in qemu, and cleans everything up on completion.
 ```
 $ bash run.sh
+```
+### Test Run:
+Makes with TEST=1, runs tests, and cleans everything up on completion.
+```
+$ bash test_run.sh
 ```
