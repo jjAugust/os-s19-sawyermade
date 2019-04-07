@@ -76,19 +76,17 @@ unsigned int tqueue_dequeue(unsigned int chid)
   if(head == NUM_IDS)
     return NUM_IDS;
 
-  else{
-    if(next == NUM_IDS)
-      tqueue_set_tail(chid, next);
+  if(next == NUM_IDS)
+    tqueue_set_tail(chid, next);
 
-    else
-      tcb_set_prev(next, NUM_IDS);
+  else
+    tcb_set_prev(next, NUM_IDS);
 
-    tqueue_set_head(chid, next);
-    tcb_set_next(head, NUM_IDS);
-    tcb_set_prev(head, NUM_IDS);
+  tqueue_set_head(chid, next);
+  tcb_set_next(head, NUM_IDS);
+  tcb_set_prev(head, NUM_IDS);
 
-    return head;
-  }
+  return head;
 }
 
 /** TASK 4:
