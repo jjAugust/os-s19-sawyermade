@@ -42,7 +42,7 @@ void tqueue_enqueue(unsigned int chid, unsigned int pid)
 {
   // TODO
   unsigned int tail = tqueue_get_tail(chid);
-  tqueue_set_tail(chid,pid);
+  tqueue_set_tail(chid, pid);
 
   if(tail == NUM_IDS)
     tqueue_set_head(chid, pid);
@@ -117,7 +117,7 @@ void tqueue_remove(unsigned int chid, unsigned int pid)
   }
 
   if(next == NUM_IDS){
-    tqueue_set_tail(chid,next);
+    tqueue_set_tail(chid, next);
     tcb_set_next(prev, next);
     tcb_set_next(pid, next);
     tcb_set_prev(pid, next);
