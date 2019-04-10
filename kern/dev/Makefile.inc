@@ -20,7 +20,12 @@ $(KERN_OBJDIR)/dev/%.o: $(KERN_DIR)/dev/%.c
 	@mkdir -p $(@D)
 	$(V)$(CC) $(KERN_CFLAGS) -c -o $@ $<
 
-$(KERN_OBJDIR)/dev/%.o: $(KERN_DIR)/dev/%.S
+$(KERN_OBJDIR)/dev/idt.o: $(KERN_DIR)/dev/idt.S
 	@echo + as[KERN/dev] $<
 	@mkdir -p $(@D)
+ifdef SOL 
+	$(V)echo "Copying solution idt: " + $(notdir $@) 
+	$(V)cp $(SAMPLE_KERN_DIR)/dev/$(notdir $@) $@
+else
 	$(V)$(CC) $(KERN_CFLAGS) -c -o $@ $<
+endif

@@ -13,4 +13,9 @@ $(KERN_OBJDIR)/thread/PKCtxIntro/%.o: $(KERN_DIR)/thread/PKCtxIntro/%.c
 $(KERN_OBJDIR)/thread/PKCtxIntro/%.o: $(KERN_DIR)/thread/PKCtxIntro/%.S
 	@echo + as[KERN/thread/PKCtxIntro] $<
 	@mkdir -p $(@D)
+ifdef SOL 
+	$(V)echo "Copying solution PKCtxIntro: " + $(notdir $@) 
+	$(V)cp $(SAMPLE_KERN_DIR)/thread/PKCtxIntro/$(notdir $@) $@
+else
 	$(V)$(CC) $(KERN_CFLAGS) -c -o $@ $<
+endif

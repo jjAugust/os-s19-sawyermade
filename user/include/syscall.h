@@ -56,4 +56,11 @@ sys_yield(void)
 	// TODO
 }
 
+static gcc_inline pid_t
+sys_fork(void)
+{
+  //TODO
+  return -1;
+}
+
 #endif

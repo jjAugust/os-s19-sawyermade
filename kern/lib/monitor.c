@@ -25,17 +25,39 @@ static struct Command commands[] =
 	{
 		{ "help", "Display this list of commands", mon_help },
 		{ "kerninfo", "Display information about the kernel", mon_kerninfo },
-		{ "startuser", "Start the user idle process", mon_start_user }, };
+		{ "startuser", "Start the user idle process", mon_start_user }, 
+        { "startfork", "Start the user fork process", mon_start_fork }, 
+	};
+
 #define NCOMMANDS (sizeof(commands)/sizeof(commands[0]))
 
 /***** Implementations of basic kernel monitor commands *****/
 
+extern uint8_t _binary___obj_user_fork_forker_start[];  // Addition for fork.
 extern uint8_t _binary___obj_user_idle_idle_start[];
 extern unsigned int proc_create(void *, unsigned int);
 extern void tqueue_remove(unsigned int, unsigned int);
 extern void tcb_set_state(unsigned int, unsigned int);
 extern void set_curid(unsigned int);
 extern void kctx_switch(unsigned int, unsigned int);
+
+/****** Addition to test fork *****/
+int
+mon_start_fork (int argc, char **argv, struct Trapframe *tf)
+{
+    unsigned int forker_pid;
+    forker_pid = proc_create (_binary___obj_user_fork_forker_start, 10000);
+    KERN_DEBUG("process forker %d is created.\n", forker_pid);
+
+    KERN_INFO("Start user-space ... \n");
+
+    tqueue_remove (NUM_IDS, forker_pid);
+    tcb_set_state (forker_pid, TSTATE_RUN);
+    set_curid (forker_pid);
+    kctx_switch (0, forker_pid);
+
+    KERN_PANIC("mon_start_fork() should never reach here.\n");
+}
 
 int
 mon_start_user (int argc, char **argv, struct Trapframe *tf)
