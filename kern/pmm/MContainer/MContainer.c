@@ -37,6 +37,7 @@ void container_init(unsigned int mbi_addr)
 {
   unsigned int real_quota;
   // TODO: define your local variables here.
+  unsigned int i, nps;
 
   pmem_init(mbi_addr);
   real_quota = 0;
@@ -49,6 +50,10 @@ void container_init(unsigned int mbi_addr)
     *  - We have already implemented functions that deal with AT data-structure in MATIntro layer.
     *    (see import.h for available functions)
     */
+  nps = get_nps();
+  for(i = 0; i < nps; i++)
+    if(at_is_norm(i) && !at_is_allocated(i))
+      real_quota++;
 
   KERN_DEBUG("\nreal quota: %d\n\n", real_quota);
 
@@ -67,7 +72,7 @@ void container_init(unsigned int mbi_addr)
 unsigned int container_get_parent(unsigned int id)
 {
   // TODO
-  return 0;
+  return CONTAINER[id].parent;
 }
 
 
@@ -77,7 +82,7 @@ unsigned int container_get_parent(unsigned int id)
 unsigned int container_get_nchildren(unsigned int id)
 {
   // TODO
-  return 0;
+  return CONTAINER[id].nchildren;
 }
 
 
@@ -87,7 +92,7 @@ unsigned int container_get_nchildren(unsigned int id)
 unsigned int container_get_quota(unsigned int id)
 {
   // TODO
-  return 0;
+  return CONTAINER[id].quota;
 }
 
 
@@ -97,7 +102,7 @@ unsigned int container_get_quota(unsigned int id)
 unsigned int container_get_usage(unsigned int id)
 {
   // TODO
-  return 0;
+  return CONTAINER[id].usage;
 }
 
 
@@ -109,6 +114,8 @@ unsigned int container_get_usage(unsigned int id)
 unsigned int container_can_consume(unsigned int id, unsigned int n)
 {
   // TODO
+  if(CONTAINER[id].quota - CONTAINER[id].usage >= n)
+    return 1;
   return 0;
 }
 
@@ -133,6 +140,16 @@ unsigned int container_split(unsigned int id, unsigned int quota)
     * Hint 1: Read about the parent/child relationship maintained in you kernel 
     *         (available at the top of this page and handout)
     */
+  // Updates parent
+  CONTAINER[id].nchildren++;
+  CONTAINER[id].usage += quota;
+
+  // Updates child
+  CONTAINER[child].quota = quota;
+  CONTAINER[child].parent = id;
+  CONTAINER[child].usage = 0;
+  CONTAINER[child].nchildren = 0;
+  CONTAINER[child].used = 1;
 
   return child;
 }
@@ -148,6 +165,10 @@ unsigned int container_alloc(unsigned int id)
   /*
    * TODO: implement the function here.
    */
+  if(CONTAINER[id].usage + 1 <= CONTAINER[id].quota){
+    CONTAINER[id].usage++;
+    return palloc();
+  }
   return 0;
 }
 
@@ -160,4 +181,6 @@ unsigned int container_alloc(unsigned int id)
 void container_free(unsigned int id, unsigned int page_index)
 {
   // TODO
+  CONTAINER[id].usage--;
+  pfree(page_index);
 }

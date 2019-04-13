@@ -8,6 +8,9 @@
 #define DIR_SHIFT   22
 #define PAGE_SHIFT  12
 
+#define VM_USERLO 0x40000000
+#define VM_USERHI 0xF0000000
+
 /** ASSIGNMENT INFO:
   * - Here we perform the virtual address translation based on 2 level paging.
   * - Remember that a 32-bit virtual address is divided into directory, page and offset fields.
@@ -28,7 +31,12 @@
 unsigned int get_pdir_entry_by_va(unsigned int proc_index, unsigned int vaddr)
 {
     // TODO
-    return 0;
+    unsigned int pde_index = vaddr & DIR_MASK, pde;
+    pde_index = pde_index>>DIR_SHIFT;
+    // pde_index = pde_index / 4096;
+    pde = get_pdir_entry(proc_index, pde_index);
+    // dprintf("\nvaddr = %u, pde_index = %u, pde = %u\n", vaddr, pde_index, pde);
+    return pde;
 }
 
 /** TASK 2:
@@ -40,7 +48,16 @@ unsigned int get_pdir_entry_by_va(unsigned int proc_index, unsigned int vaddr)
 unsigned int get_ptbl_entry_by_va(unsigned int proc_index, unsigned int vaddr)
 {
     // TODO
-    return 0;
+    unsigned int pde_index = vaddr & DIR_MASK, pte_index = vaddr & PAGE_MASK, pte, pde, i;
+    pde_index = pde_index>>DIR_SHIFT;
+    pte_index = pte_index>>PAGE_SHIFT;
+    pde = get_pdir_entry_by_va(proc_index, vaddr);
+    // pde = get_pdir_entry(proc_index, pde_index);
+    pte = get_ptbl_entry(proc_index, pde_index, pte_index);
+
+    if(pde == 0)
+      return 0;
+    return pte;
 }         
 
 /** TASK 3:
@@ -51,6 +68,9 @@ unsigned int get_ptbl_entry_by_va(unsigned int proc_index, unsigned int vaddr)
 void rmv_pdir_entry_by_va(unsigned int proc_index, unsigned int vaddr)
 {
     // TODO
+    unsigned int pde_index = vaddr & DIR_MASK, pde;
+    pde_index = pde_index>>DIR_SHIFT;
+    rmv_pdir_entry(proc_index, pde_index);
 }
 
 /** TASK 4:
@@ -60,6 +80,10 @@ void rmv_pdir_entry_by_va(unsigned int proc_index, unsigned int vaddr)
 void rmv_ptbl_entry_by_va(unsigned int proc_index, unsigned int vaddr)
 {
     // TODO
+    unsigned int pde_index = vaddr & DIR_MASK, pte_index = vaddr & PAGE_MASK, pte, pde;
+    pde_index = pde_index>>DIR_SHIFT;
+    pte_index = pte_index>>PAGE_SHIFT;
+    rmv_ptbl_entry(proc_index, pde_index, pte_index);
 }
 
 /** TASK 5:
@@ -69,6 +93,9 @@ void rmv_ptbl_entry_by_va(unsigned int proc_index, unsigned int vaddr)
 void set_pdir_entry_by_va(unsigned int proc_index, unsigned int vaddr, unsigned int page_index)
 {
     // TODO
+    unsigned int pde_index = vaddr & DIR_MASK, pde;
+    pde_index = pde_index>>DIR_SHIFT;
+    set_pdir_entry(proc_index, pde_index, page_index);
 }   
 
 /** TASK 6:
@@ -79,6 +106,11 @@ void set_pdir_entry_by_va(unsigned int proc_index, unsigned int vaddr, unsigned 
 void set_ptbl_entry_by_va(unsigned int proc_index, unsigned int vaddr, unsigned int page_index, unsigned int perm)
 {
     // TODO
+    unsigned int pde_index = vaddr & DIR_MASK, pte_index = vaddr & PAGE_MASK, pte, pde;
+    pde_index = pde_index>>DIR_SHIFT;
+    pte_index = pte_index>>PAGE_SHIFT;
+    // pte = get_ptbl_entry(proc_index, pde_index, pte_index);
+    set_ptbl_entry(proc_index, pde_index, pte_index, page_index, perm);
 }
 
 /** TASK 7:
@@ -95,8 +127,20 @@ void set_ptbl_entry_by_va(unsigned int proc_index, unsigned int vaddr, unsigned 
 void idptbl_init(unsigned int mbi_adr)
 {
     // TODO: define your local variables here.
-    //
     container_init(mbi_adr);
-
+    // dprintf("shit ored = %u, ored = %u\n", PTE_P | PTE_W | PTE_G, PTE_P | PTE_W);
     // TODO
+    unsigned int i, j, addr, size = 1024, hi, lo;
+    lo = VM_USERLO / 4096 / 1024;
+    hi = VM_USERHI / 4096 / 1024;
+    for(i = 0; i < size; i++){
+      for(j = 0; j < size; j++){
+        // addr = j*size*4096;
+        // if(addr < VM_USERLO || addr >= VM_USERHI)
+        if(i < lo || i >= hi)
+          set_ptbl_entry_identity(i, j, PTE_P | PTE_W | PTE_G);
+        else
+          set_ptbl_entry_identity(i, j, PTE_P | PTE_W);
+      }
+    }
 }

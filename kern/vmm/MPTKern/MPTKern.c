@@ -3,6 +3,15 @@
 
 #include "import.h"
 
+#define VM_USERLO 0x40000000
+#define VM_USERHI 0xF0000000
+#define DIR_MASK    0xffc00000
+#define PAGE_MASK   0x003ff000
+#define OFFSET_MASK 0x00000fff
+#define DIR_SHIFT   22
+#define PAGE_SHIFT  12
+#define PAGESIZE 4096;
+
 /** TASK 1:
   * * Set the entire page map for process 0 as identity map.
   *  
@@ -12,10 +21,15 @@
 void pdir_init_kern(unsigned int mbi_adr)
 {
     // TODO: define your local variables here.
-
+    unsigned int i, lo, hi;
     pdir_init(mbi_adr);
     
     //TODO
+    lo = VM_USERLO / 4096 / 1024;
+    hi = VM_USERHI / 4096 / 1024;
+    for(i = lo; i < hi; i++){
+      set_pdir_entry_identity(0,i);
+    }
 }
 
 /** TASK 2:
@@ -34,7 +48,28 @@ void pdir_init_kern(unsigned int mbi_adr)
 unsigned int map_page(unsigned int proc_index, unsigned int vadr, unsigned int page_index, unsigned int perm)
 {   
   // TODO
-  return 0;
+  unsigned int pde_index=0, pde=0, addr=0;
+  pde = get_pdir_entry_by_va(proc_index, vadr);
+  if(pde > 0){
+    pde_index = pde>>12;
+    // pde_index = pde<<12;
+    // pde_index = pde / PAGESIZE;
+  }
+  else{
+    addr = alloc_ptbl(proc_index, vadr);
+    if(addr == 0){
+      return MagicNumber;
+    }
+  }
+  set_ptbl_entry_by_va(proc_index, vadr, page_index, perm);
+  // return get_pdir_entry_by_va(proc_index, vadr);
+  // return get_ptbl_entry_by_va(proc_index, vadr);
+  // return pde_index;
+  // dprintf("\npde, pde_index, addr = %u, %u, %u\n", pde, pde_index, addr);
+  if(addr != 0)
+    return addr;
+  else
+    return pde_index;
 }
 
 /** TASK 3:
@@ -48,5 +83,12 @@ unsigned int map_page(unsigned int proc_index, unsigned int vadr, unsigned int p
 unsigned int unmap_page(unsigned int proc_index, unsigned int vadr)
 {
   // TODO
-  return 0;
+  unsigned int pte=0;
+  pte = get_ptbl_entry_by_va(proc_index, vadr);
+  // dprintf("pte = %u\n", pte);
+  if(pte != 0){
+    rmv_ptbl_entry_by_va(proc_index, vadr);
+  }
+
+  return pte;
 }   

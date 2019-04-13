@@ -9,20 +9,20 @@ int MPTNew_test1()
   unsigned int vaddr = 4096*1024*400;
   container_split(0, 100);
   if (get_ptbl_entry_by_va(1, vaddr) != 0) {
-    dprintf("test 1 failed.\n");
+    dprintf("test 1a failed.\n");
     return 1;
   }
   if (get_pdir_entry_by_va(1, vaddr) != 0) {
-    dprintf("test 1 failed.\n");
+    dprintf("test 1b failed.\n");
     return 1;
   }
   alloc_page(1, vaddr, 7);
   if (get_ptbl_entry_by_va(1, vaddr) == 0) {
-    dprintf("test 1 failed.\n");
+    dprintf("test 1c failed.\n");
     return 1;
   }
   if (get_pdir_entry_by_va(1, vaddr) == 0) {
-    dprintf("test 1 failed.\n");
+    dprintf("test 1d failed.\n");
     return 1;
   }
   dprintf("test 1 passed.\n");

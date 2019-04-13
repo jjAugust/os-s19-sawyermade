@@ -13,20 +13,28 @@
   *     return value from map_page.
   *   - In the case of error, it should return the MagicNumber.
   */
-unsigned int alloc_page (unsigned int proc_index, unsigned int vaddr, unsigned int perm)
+unsigned int alloc_page(unsigned int proc_index, unsigned int vaddr, unsigned int perm)
 {
 	// TODO
-	return 0;
+  unsigned int addr, retaddr;
+  addr = container_alloc(proc_index);
+  if(addr == 0)
+    return MagicNumber;
+  retaddr = map_page(proc_index, vaddr, addr, perm);
+  if(retaddr == 0)
+    return MagicNumber;
+  // dprintf("addr = %u, retaddr = %u\n", addr, retaddr);
+	return retaddr;
 }
 
 
 /**
  * Designate some memory quota for the next child process.
  */
-unsigned int alloc_mem_quota (unsigned int id, unsigned int quota)
+unsigned int alloc_mem_quota(unsigned int id, unsigned int quota)
 {
 	unsigned int child;
-	child = container_split (id, quota);
+	child = container_split(id, quota);
 	return child;
 }
 

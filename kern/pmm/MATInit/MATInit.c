@@ -7,6 +7,9 @@
 #define VM_USERLO_PI	(VM_USERLO / PAGESIZE)   // VM_USERLO page index
 #define VM_USERHI_PI	(VM_USERHI / PAGESIZE)   // VM_USERHI page index
 
+#define TRUE 1
+#define FALSE 0
+
 /** ASSIGNMENT INFO:
   * * Implement the initialization function for the allocation table AT.
   * - It contains two major parts:
@@ -22,6 +25,8 @@ pmem_init(unsigned int mbi_addr)
   unsigned int nps;
 
   // TODO: Define your local variables here.
+  unsigned int numRows, lastAddr, i, row, start, stop, addrStart, addrStop;
+  char found;
 
   //Calls the lower layer initializatin primitives.
   //The parameter mbi_addr shell not be used in the further code.
@@ -35,6 +40,10 @@ pmem_init(unsigned int mbi_addr)
     *         divided by the page size plus 1.
     */
   // TODO
+  numRows = get_size();
+  lastAddr = get_mms(numRows - 1) + get_mml(numRows - 1);
+  nps = lastAddr / PAGESIZE + 1;
+  // dprintf("\nnps = %u, lastAddr = %u, numRows = %u\n", nps, lastAddr, numRows);
 
 	set_nps(nps); // Setting the value computed above to NUM_PAGES.
 
@@ -64,6 +73,45 @@ pmem_init(unsigned int mbi_addr)
     *    You should still set the permission of those pages in allocation table to 0.
     */
   // TODO
+  //DEBUG
+  // for(row=0; row < numRows; row++){
+  //   start = get_mms(row);
+  //   stop = start + get_mml(row);
+  //   dprintf("\nrow = %u, start = %u, range = %u, stop = %u\n", row, start, get_mml(row), stop);
+  // }
+  // dprintf("\nTRUE = %d, FALSE = %d\n", TRUE, FALSE);
+
+  for(i = 0; i < nps; i++){
+    // Kernel pages
+    if(i < VM_USERLO_PI || i >= VM_USERHI_PI)
+      at_set_perm(i, 1);
+    
+    // Checks non-kernel pages
+    else {
+      // Gets start and end address for page, sets found to false
+      addrStart = i*PAGESIZE;
+      addrStop = addrStart + PAGESIZE - 1;
+      found = FALSE;
+
+      // Checks mem map row by row
+      for(row = 0; row < numRows; row++){
+        // Gets row start and stop addresses
+        start = get_mms(row);
+        stop = start + get_mml(row);
+
+        // Checks 
+        if(addrStart >= start && addrStop < stop){
+          if(is_usable(row))
+            at_set_perm(i, 2);
+          else
+            at_set_perm(i, 0);
+          found = TRUE;
+          break;
+        }
+      }
+      if(found == FALSE)
+        at_set_perm(i, 0);
+    }
+  }
+
 }
-
-
