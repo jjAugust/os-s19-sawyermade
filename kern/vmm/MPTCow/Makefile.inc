@@ -1,31 +1,31 @@
 # -*-Makefile-*-
 
-OBJDIRS		+= $(KERN_OBJDIR)/vmm/MPTNew
+OBJDIRS		+= $(KERN_OBJDIR)/vmm/MPTCow
 
-KERN_SRCFILES	+= $(KERN_DIR)/vmm/MPTNew/MPTNew.c
+KERN_SRCFILES	+= $(KERN_DIR)/vmm/MPTCow/MPTCow.c
 ifdef TEST
-KERN_SRCFILES	+= $(KERN_DIR)/vmm/MPTNew/test.c
+KERN_SRCFILES	+= $(KERN_DIR)/vmm/MPTCow/test.c
 endif
 
-$(KERN_OBJDIR)/vmm/MPTNew/MPTNew.o: $(KERN_DIR)/vmm/MPTNew/MPTNew.c
-	@echo + $(COMP_NAME)[KERN/vmm/MPTNew] $<
+$(KERN_OBJDIR)/vmm/MPTCow/MPTCow.o: $(KERN_DIR)/vmm/MPTCow/MPTCow.c
+	@echo + $(COMP_NAME)[KERN/vmm/MPTCow] $<
 	@mkdir -p $(@D)
 ifdef SOL 
-	$(V)echo "Copying solution MPTNew: " + $(notdir $@) 
-	$(V)cp $(SAMPLE_KERN_DIR)/vmm/MPTNew/$(notdir $@) $@
+	$(V)echo "Copying solution MPTCow: " + $(notdir $@) 
+	$(V)cp $(SAMPLE_KERN_DIR)/vmm/MPTCow/$(notdir $@) $@
 else
 	$(V)$(CCOMP) $(CCOMP_KERN_CFLAGS) -c -o $@ $<
 endif
 
-$(KERN_OBJDIR)/vmm/MPTNew/test.o: $(KERN_DIR)/vmm/MPTNew/test.c
+$(KERN_OBJDIR)/vmm/MPTCow/test.o: $(KERN_DIR)/vmm/MPTCow/test.c
 	$(V)$(CCOMP) $(CCOMP_KERN_CFLAGS) -c -o $@ $<
 
-$(KERN_OBJDIR)/vmm/MPTNew/%.o: $(KERN_DIR)/vmm/MPTNew/%.S
-	@echo + as[KERN/vmm/MPTNew] $<
+$(KERN_OBJDIR)/vmm/MPTCow/%.o: $(KERN_DIR)/vmm/MPTCow/%.S
+	@echo + as[KERN/vmm/MPTCow] $<
 	@mkdir -p $(@D)
 ifdef SOL 
-	$(V)echo "Copying solution MPTNew: " + $(notdir $@) 
-	$(V)cp $(SAMPLE_KERN_DIR)/vmm/MPTNew/$(notdir $@) $@
+	$(V)echo "Copying solution MPTCow: " + $(notdir $@) 
+	$(V)cp $(SAMPLE_KERN_DIR)/vmm/MPTCow/$(notdir $@) $@
 else
 	$(V)$(CC) $(KERN_CFLAGS) -c -o $@ $<
 endif
