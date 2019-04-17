@@ -56,7 +56,7 @@ void sys_puts(void)
 extern uint8_t _binary___obj_user_pingpong_ping_start[];
 extern uint8_t _binary___obj_user_pingpong_pong_start[];
 extern uint8_t _binary___obj_user_pingpong_ding_start[];
-extern uint8_t _binary___obj_user_fork_forker_start[];    // Addition for forker.
+extern uint8_t _binary___obj_user_fork_fork_start[];    // Addition for forker.
 
 /** TASK 1:
   * * Spawn a new child process.
@@ -96,6 +96,8 @@ void sys_spawn(void)
 
     case 3: proc = proc_create(_binary___obj_user_pingpong_ding_start, quota); break;
 
+    case 4: proc = proc_create(_binary___obj_user_fork_fork_start, quota); break;
+
     default : proc = NUM_IDS; break;
   }
 
@@ -124,5 +126,13 @@ void sys_yield(void)
 {
   // TODO
   thread_yield();
+  syscall_set_errno(E_SUCC);
+}
+
+void sys_fork(void) {
+
+  dprintf("\nIn sys_fork(), E_SUCC = %d\n", E_SUCC);
+
+  syscall_set_retval1(proc_fork(_binary___obj_user_fork_fork_start));
   syscall_set_errno(E_SUCC);
 }

@@ -63,17 +63,29 @@ void pgflt_handler(void)
 	 * In that case, check if the page table entry [fault_va] is marked as PTE_COW 
 	 * and copy it and return.
 	 */
+  // dprintf("\nerrno = %d\n", errno);
+  if(errno == 0x3){
+    pte_entry = get_ptbl_entry_by_va(cur_pid, fault_va) & PTE_COW;
+    if(pte_entry == PTE_COW){
+      map_decow(cur_pid, fault_va);
+      return;
+    }
+
+  }
 
   //Uncomment this line if you need to see the information of the sequence of page faults occured.
 	//KERN_DEBUG("Page fault: VA 0x%08x, errno 0x%08x, process %d, EIP 0x%08x.\n", fault_va, errno, cur_pid, uctx_pool[cur_pid].eip);
-
-	if (errno & PFE_PR) {
+  
+	if(errno & PFE_PR) {
+    dprintf("\nerrno = %d, PFE_PR = %d\n", errno, PFE_PR);
 		KERN_PANIC("Permission denied: va = 0x%08x, errno = 0x%08x.\n", fault_va, errno);
 		return;
 	}
 
-	if (alloc_page(cur_pid, fault_va, PTE_W | PTE_U | PTE_P) == MagicNumber)
+	if (alloc_page(cur_pid, fault_va, PTE_W | PTE_U | PTE_P) == MagicNumber){
+    dprintf("\nerrno = %d\n", errno);
     KERN_PANIC("Page allocation failed: va = 0x%08x, errno = 0x%08x.\n", fault_va, errno);
+  }
 
 }
 

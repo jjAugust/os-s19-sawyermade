@@ -10,7 +10,7 @@
 #define OFFSET_MASK 0x00000fff
 #define DIR_SHIFT   22
 #define PAGE_SHIFT  12
-#define PAGESIZE 4096;
+// #define PAGESIZE 4096;
 
 /** TASK 1:
   * * Set the entire page map for process 0 as identity map.
@@ -50,16 +50,18 @@ unsigned int map_page(unsigned int proc_index, unsigned int vadr, unsigned int p
   // TODO
   unsigned int pde_index=0, pde=0, addr=0;
   pde = get_pdir_entry_by_va(proc_index, vadr);
-  if(pde > 0){
-    pde_index = pde>>12;
-    // pde_index = pde<<12;
-    // pde_index = pde / PAGESIZE;
-  }
-  else{
+  pde_index = pde>>12;
+  if(pde_index < 1){
     addr = alloc_ptbl(proc_index, vadr);
     if(addr == 0){
       return MagicNumber;
     }
+
+  }
+  else{
+    0;
+    // pde_index = pde<<12;
+    // pde_index = pde / PAGESIZE;
   }
   set_ptbl_entry_by_va(proc_index, vadr, page_index, perm);
   // return get_pdir_entry_by_va(proc_index, vadr);

@@ -1,4 +1,5 @@
 #include <lib/syscall.h>
+#include <lib/debug.h>
 
 #include "import.h"
 
@@ -20,6 +21,8 @@ void syscall_dispatch(void)
 		case SYS_spawn : sys_spawn(); break;
 
 		case SYS_yield : sys_yield(); break;
+
+		case SYS_fork : dprintf("\nIn syscall_dispatch()\n", E_INVAL_CALLNR); sys_fork(); break;
 
 		default : syscall_set_errno(E_INVAL_CALLNR); break;
 	}

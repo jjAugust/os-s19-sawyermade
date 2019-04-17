@@ -12,6 +12,8 @@ unsigned int get_curid(void);
 void syscall_dispatch(void);
 unsigned int alloc_page(unsigned int proc_index, unsigned int vaddr, unsigned int perm);
 
+void map_decow(unsigned int, unsigned int);
+
 #endif /* _KERN_ */
 
 #endif /* !_KERN_TRAP_TTRAPHANDLER_H_ */

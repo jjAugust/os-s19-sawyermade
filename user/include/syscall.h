@@ -2,6 +2,7 @@
 #define _USER_SYSCALL_H_
 
 #include <lib/syscall.h>
+#include <lib/debug.h>
 
 #include <debug.h>
 #include <gcc.h>
@@ -65,6 +66,35 @@ sys_spawn(uintptr_t exec, unsigned int quota)
   return b;
 }
 
+static gcc_inline pid_t
+sys_fork(void)
+{
+  _KERN_DEBUG_H_("\nIn syscall.h %d\n", 0);
+  // TODO
+  unsigned int a, b;
+
+  asm volatile(
+    "int %2" 
+    :
+    "=a" (a),
+    "=b" (b)
+    :
+    "i" (T_SYSCALL),
+    "a" (SYS_fork)//,
+    // "b" (exec),
+    // "c" (quota)
+    :
+    "cc",
+    "memory"
+  );
+
+  // if(a == NUM_IDS)
+  if(a != E_SUCC)
+    return -1;
+
+  return b;
+}
+
 /** TASK 2:
   * * Use inline assembly to perform a yield system call. 
   *	  This system call will voluntarily yield the CPU to the next process in the ready queue.
@@ -86,11 +116,11 @@ sys_yield(void)
   );
 }
 
-static gcc_inline pid_t
-sys_fork(void)
-{
-  //TODO
-  return -1;
-}
+// static gcc_inline pid_t
+// sys_fork(void)
+// {
+//   //TODO
+//   return -1;
+// }
 
 #endif

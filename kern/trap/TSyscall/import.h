@@ -21,6 +21,8 @@ void syscall_set_retval5(unsigned int retval);
 unsigned int proc_create(void *elf_addr, unsigned int);
 void thread_yield(void);
 
+unsigned int proc_fork(void*);
+
 #endif /* _KERN_ */
 
 #endif /* !_KERN_TRAP_TSYSCALL_H_ */

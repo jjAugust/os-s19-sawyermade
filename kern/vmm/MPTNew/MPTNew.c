@@ -37,4 +37,3 @@ unsigned int alloc_mem_quota(unsigned int id, unsigned int quota)
 	child = container_split(id, quota);
 	return child;
 }
-

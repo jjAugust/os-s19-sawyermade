@@ -10,6 +10,8 @@ void sys_puts(void);
 void sys_spawn(void);
 void sys_yield(void);
 
+void sys_fork(void);
+
 #endif /* _KERN_ */
 
 #endif /* !_KERN_TRAP_TDISPATCH_H_ */

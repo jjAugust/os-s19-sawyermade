@@ -67,3 +67,24 @@ unsigned int proc_create(void *elf_addr, unsigned int quota)
 
 	  return pid;
 }
+
+
+unsigned int proc_fork(void *elf_addr) {
+  
+  dprintf("\nIN proc_fork()\n");
+
+  // Gets 
+  unsigned int id = get_curid(), quota = container_get_quota(id) / 2, pid;
+
+  pid = thread_fork((void *)proc_start_user, id, quota);
+
+  // elf_load(elf_addr, pid);
+  // uctx_pool[pid].regs.eax = 0x3;
+  // uctx_pool[pid].regs.ebx = 0x3;
+  // uctx_pool[pid].err = 0x3;
+  // uctx_pool[pid].eip = elf_entry(elf_addr);
+
+  map_cow(id, pid);
+
+  return pid;
+}
