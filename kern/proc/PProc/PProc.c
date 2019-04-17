@@ -85,7 +85,7 @@ unsigned int proc_fork(void *elf_addr) {
   // uctx_pool[pid] = uctx_pool[id];
   // uctx_pool[pid].regs.eax = 0;
   // uctx_pool[pid].regs.ebx = 0;
-  // uctx_pool[pid].err = 0;
+  // uctx_pool[pid].err = 3;
   
   uctx_pool[pid].eip = elf_entry(elf_addr);
   dprintf("\neip = %d\n", uctx_pool[pid].eip);
