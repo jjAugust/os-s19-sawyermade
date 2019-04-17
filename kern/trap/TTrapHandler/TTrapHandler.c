@@ -64,7 +64,7 @@ void pgflt_handler(void)
 	 * and copy it and return.
 	 */
   // dprintf("\nerrno = %d\n", errno);
-  if(errno == 0x3){
+  if(errno == 0x3 | errno == 5){
     pte_entry = get_ptbl_entry_by_va(cur_pid, fault_va) & PTE_COW;
     if(pte_entry == PTE_COW){
       map_decow(cur_pid, fault_va);
