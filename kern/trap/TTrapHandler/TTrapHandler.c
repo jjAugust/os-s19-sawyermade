@@ -74,7 +74,7 @@ void pgflt_handler(void)
   }
 
   //Uncomment this line if you need to see the information of the sequence of page faults occured.
-	KERN_DEBUG("Page fault: VA 0x%08x, errno 0x%08x, process %d, EIP 0x%08x, PFE_PR = %d, errno = %d, AND %d.\n", fault_va, errno, cur_pid, uctx_pool[cur_pid].eip, PFE_PR, errno, errno & PFE_PR);
+	// KERN_DEBUG("Page fault: VA 0x%08x, errno 0x%08x, process %d, EIP 0x%08x, PFE_PR = %d, errno = %d, AND %d.\n", fault_va, errno, cur_pid, uctx_pool[cur_pid].eip, PFE_PR, errno, errno & PFE_PR);
   
 	if(errno & PFE_PR) {
     dprintf("\nerrno = %d, PFE_PR = %d\n", errno, PFE_PR);

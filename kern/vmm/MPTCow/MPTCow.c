@@ -76,7 +76,7 @@ void map_cow(unsigned int from_pid, unsigned int to_pid) {
         for(j = 0; j < PAGENUM; j++){
             pte = get_ptbl_entry(from_pid, i, j);
             pte = pte>>PAGE_SHIFT;
-            set_ptbl_entry(from_pid, i, j, pte, PERM_COW);
+            set_ptbl_entry(from_pid, i, j, pte, PTE_COW);
         }
  	}
 }
