@@ -61,15 +61,20 @@ void map_cow(unsigned int from_pid, unsigned int to_pid) {
 
     // Copies user space
  	for(i = lo; i < hi; i++){
- 		// Gets pde from
-        pde = get_pdir_entry(from_pid, i);
  		
-        // Sets pde to
+        // pde = get_pdir_entry(to_pid, i);
+        // if(pde != 0)
+        //     dprintf("\nog pde = %d, i = %d", pde, i);
+
+        // Gets pde from, sets to to
+        pde = get_pdir_entry(from_pid, i);
         pde = pde>>PAGE_SHIFT;
  		set_pdir_entry(to_pid, i, pde);
 
+        // set_pdir_entry_identity(to_pid, i);
+
         //Maybe
-        // pde = (pde & PERM_MASK) | PERM_COW;
+        // pde = pde<<PAGE_SHIFT | PTE_COW;
         // set_pdir_entry_fork(to_pid, i, pde);
         // set_pdir_entry_fork(from_pid, i, pde);
 
@@ -77,6 +82,7 @@ void map_cow(unsigned int from_pid, unsigned int to_pid) {
             pte = get_ptbl_entry(from_pid, i, j);
             pte = pte>>PAGE_SHIFT;
             set_ptbl_entry(from_pid, i, j, pte, PTE_COW);
+            // set_ptbl_entry(to_pid, i, j, pte, PTE_COW);
         }
  	}
 }

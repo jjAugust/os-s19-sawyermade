@@ -80,6 +80,12 @@ void set_pdir_entry(unsigned int proc_index, unsigned int pde_index, unsigned in
     PDirPool[proc_index][pde_index] = (char*)((page_index<<12) | PT_PERM_PTU);
 }   
 
+void set_pdir_entry_fork(unsigned int proc_index, unsigned int pde_index, unsigned int page_index)
+{
+    // TODO
+    PDirPool[proc_index][pde_index] = (char*)page_index;
+}   
+
 /** TASK 4:
   * * Set the page directory entry # [pde_index] for the process # [proc_index]
   *   with the initial address of page directory # [pde_index] in IDPTbl

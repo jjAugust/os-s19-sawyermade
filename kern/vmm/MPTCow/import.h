@@ -13,6 +13,8 @@ void set_ptbl_entry(unsigned int, unsigned int, unsigned int, unsigned int, unsi
 void set_ptbl_entry_identity(unsigned int, unsigned int, unsigned int);
 void rmv_ptbl_entry(unsigned int, unsigned int, unsigned int);
 
+void set_pdir_entry_fork(unsigned int, unsigned int, unsigned int);
+
 unsigned int alloc_page(unsigned int, unsigned int, unsigned int);
 unsigned int alloc_mem_quota(unsigned int, unsigned int);
 
