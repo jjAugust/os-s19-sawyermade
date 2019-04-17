@@ -64,13 +64,13 @@ void pgflt_handler(void)
 	 * and copy it and return.
 	 */
   // dprintf("\nerrno = %d\n", errno);
-  if(errno == 0x3 | errno == 5){
+  if(errno == 0x3){
     pte_entry = get_ptbl_entry_by_va(cur_pid, fault_va) & PTE_COW;
     if(pte_entry == PTE_COW){
       map_decow(cur_pid, fault_va);
       return;
     }
-
+    dprintf("\nerrno=%d", errno);
   }
 
   //Uncomment this line if you need to see the information of the sequence of page faults occured.

@@ -76,6 +76,7 @@ unsigned int proc_fork(void *elf_addr) {
   // Gets 
   unsigned int id = get_curid(), quota = container_get_quota(id) / 2, pid;
   dprintf("\nIn proc_fork() eax = %d, ebx = %d, err = %d\n", uctx_pool[id].regs.eax, uctx_pool[id].regs.ebx, uctx_pool[id].err);
+  dprintf("\neip = %d\n", uctx_pool[id].eip);
 
   pid = thread_fork((void *)proc_start_user, id, quota);
   map_cow(id, pid);
