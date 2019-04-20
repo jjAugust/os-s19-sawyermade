@@ -1,6 +1,8 @@
 #include <lib/x86.h>
 #include <lib/thread.h>
 
+#include <lib/debug.h>
+
 #include "import.h"
 
 void thread_init(unsigned int mbi_addr)
@@ -31,9 +33,11 @@ unsigned int thread_spawn(void *entry, unsigned int id, unsigned int quota)
 unsigned int thread_fork(void *entry, unsigned int id, unsigned int quota)
 {
   // TODO
+  dprintf("\nIn thread_fork()\n");
   unsigned int chid = kctx_new(entry, id, quota);
   tcb_set_state(chid, TSTATE_READY);
   tqueue_enqueue(NUM_IDS, chid);
+
   return chid;
 }
 

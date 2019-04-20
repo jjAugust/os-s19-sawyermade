@@ -74,7 +74,7 @@ unsigned int proc_fork(void *elf_addr) {
   // dprintf("\nIN proc_fork()\n");
 
   // Gets 
-  unsigned int id = get_curid(), quota = container_get_quota(id) / 2, pid;
+  unsigned int id = get_curid(), quota = (container_get_quota(id) - container_get_usage(id)) / 2, pid;
   dprintf("\nIn proc_fork() eax = %d, ebx = %d, err = %d\n", uctx_pool[id].regs.eax, uctx_pool[id].regs.ebx, uctx_pool[id].err);
   dprintf("\neip = %d\n", uctx_pool[id].eip);
 
@@ -83,13 +83,20 @@ unsigned int proc_fork(void *elf_addr) {
 
   elf_load(elf_addr, pid);
   // uctx_pool[pid] = uctx_pool[id];
-  // uctx_pool[pid].regs.eax = 0;
-  // uctx_pool[pid].regs.ebx = 0;
-  // uctx_pool[pid].err = 3;
-  
+  uctx_pool[pid].es = uctx_pool[id].es;
+  uctx_pool[pid].ds = uctx_pool[id].ds;
+  uctx_pool[pid].cs = uctx_pool[id].cs;
+  uctx_pool[pid].ss = uctx_pool[id].ss;
+  uctx_pool[pid].esp = uctx_pool[id].esp;
+  uctx_pool[pid].eflags = uctx_pool[id].eflags;
+  uctx_pool[pid].regs.eax = 0;
+  uctx_pool[pid].regs.ebx = 0;
+  uctx_pool[pid].err = uctx_pool[id].err;
   uctx_pool[pid].eip = elf_entry(elf_addr);
-  dprintf("\neip = %d\n", uctx_pool[pid].eip);
+  dprintf("\neip = %d, .err = %d, .eax = %d\n", uctx_pool[pid].eip, uctx_pool[pid].err, uctx_pool[pid].regs.eax);
   
+  uctx_pool[id].regs.ebx = pid;
+  uctx_pool[id].regs.eax = 0;
 
   return pid;
 }

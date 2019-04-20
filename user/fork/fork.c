@@ -3,10 +3,14 @@
 #include <syscall.h>
 #include <x86.h>
 
+#include <lib/debug.h>
+
 uint32_t global_test = 0x12345678;
 
 int main (int argc, char **argv)
 {
+    printf("\nIn fork.c\n");
+
     pid_t pid;
 
     pid = sys_fork();

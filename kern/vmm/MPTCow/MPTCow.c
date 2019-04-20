@@ -50,83 +50,84 @@
 
 void map_cow(unsigned int from_pid, unsigned int to_pid) {
 	
-    dprintf("\nIn map_cow()\n");
+	dprintf("\nIn map_cow()\n");
 
-    // Local vars
+	// Local vars
 	unsigned int i, j, lo, hi, pde, pte;
 
 	// User space
 	lo = VM_USERLO / PAGESIZE / PAGENUM;
-    hi = VM_USERHI / PAGESIZE / PAGENUM;
+	hi = VM_USERHI / PAGESIZE / PAGENUM;
 
-    // Copies user space
- 	for(i = lo; i < hi; i++){
- 		
-        // pde = get_pdir_entry(to_pid, i);
-        // if(pde != 0)
-        //     dprintf("\nog pde = %d, i = %d", pde, i);
+	// Copies user space
+	for(i = lo; i < hi; i++){
+		
+		// pde = get_pdir_entry(to_pid, i);
+		// if(pde != 0)
+		//     dprintf("\nog pde = %d, i = %d", pde, i);
 
-        // Gets pde from, sets to to
-        pde = get_pdir_entry(from_pid, i);
-        pde = pde>>PAGE_SHIFT;
- 		set_pdir_entry(to_pid, i, pde);
+		// Gets pde from, sets to to
+		pde = get_pdir_entry(from_pid, i);
+		pde = pde>>PAGE_SHIFT;
+		set_pdir_entry(to_pid, i, pde);
 
-        // set_pdir_entry_identity(to_pid, i);
+		// set_pdir_entry_identity(to_pid, i);
 
-        //Maybe
-        // pde = pde<<PAGE_SHIFT | PTE_COW;
-        // set_pdir_entry_fork(to_pid, i, pde);
-        // set_pdir_entry_fork(from_pid, i, pde);
+		//Maybe
+		// pde = pde<<PAGE_SHIFT | PTE_COW;
+		// set_pdir_entry_fork(to_pid, i, pde);
+		// set_pdir_entry_fork(from_pid, i, pde);
 
-        for(j = 0; j < PAGENUM; j++){
-            pte = get_ptbl_entry(from_pid, i, j);
-            pte = pte>>PAGE_SHIFT;
-            set_ptbl_entry(from_pid, i, j, pte, PTE_COW);
-            // set_ptbl_entry(to_pid, i, j, pte, PTE_COW);
-        }
- 	}
+		for(j = 0; j < PAGENUM; j++){
+			pte = get_ptbl_entry(from_pid, i, j);
+			pte = pte>>PAGE_SHIFT;
+			set_ptbl_entry(from_pid, i, j, pte, PTE_COW);
+			// set_ptbl_entry(to_pid, i, j, pte, PERM_COW);
+			// set_ptbl_entry(from_pid, i, j, pte, PERM_COW | PTE_W);
+		}
+	}
 }
 
 void map_decow(unsigned int pid, unsigned int vadr) {
-    
-    dprintf("\nIn map_decow()\n");
+	
+	dprintf("\nIn map_decow()\n");
 
-    // Local vars
-    unsigned int old_pde=0, new_pde=0, pde_index=0, pte_index=0;
-    unsigned int i, j, old_pte, temp_pte, new_pte;
+	// Local vars
+	unsigned int old_pde=0, new_pde=0, pde_index=0, pte_index=0;
+	unsigned int i, j, old_pte, temp_pte, new_pte;
 
-    // Gets indices
-    pde_index = (vadr & DIR_MASK)>>DIR_SHIFT;
-    pte_index = (vadr & PAGE_MASK)>>PAGE_SHIFT;
+	// Gets indices
+	pde_index = (vadr & DIR_MASK)>>DIR_SHIFT;
+	pte_index = (vadr & PAGE_MASK)>>PAGE_SHIFT;
 
-    // Gets old pde and sets current pde to 0
-    old_pde = get_pdir_entry(pid, pde_index);
-    set_pdir_entry(pid, pde_index, 0);
+	// Gets old pde and sets current pde to 0
+	old_pde = get_pdir_entry(pid, pde_index);
+	set_pdir_entry(pid, pde_index, 0);
 
-    // Gets new pde and allocs new page
-    new_pde = alloc_page(pid, vadr, PERM_REG);
+	// Gets new pde and allocs new page
+	new_pde = alloc_page(pid, vadr, PERM_REG);
 
-    // Copy stuff
-    for(i = 0; i < PAGENUM; i++){
-        // Copies pte from old pde
-        old_pte = *(unsigned int*)(old_pde + 4*i);
-        new_pte = new_pde + 4*i;
+	// Copy stuff
+	for(i = 0; i < PAGENUM; i++){
+		// Copies pte from old pde
+		old_pte = *(unsigned int*)(old_pde + 4*i);
+		new_pte = new_pde + 4*i;
 
-        // Checks if changed pte
-        if(i == pte_index){
-            // Copies pte maybe
-            // for(j = 0; j < PAGENUM; j++){
-            //     // Copies from old_pte to new_pte
-            //     *(unsigned int*)new_pte = *(unsigned int*)(old_pte + 4*j);
-            // }
+		// Checks if changed pte
+		if(i == pte_index){
+			// Copies pte maybe
+			// for(j = 0; j < PAGENUM; j++){
+			//     // Copies from old_pte to new_pte
+			//     *(unsigned int*)new_pte = *(unsigned int*)(old_pte + 4*j);
+			// }
 
-            // Copies with changed permission
-            *(unsigned int*)(new_pde + 4*i) = (old_pte & PERM_MASK) | PERM_REG;
-        }
+			// Copies with changed permission
+			*(unsigned int*)(new_pde + 4*i) = (old_pte & PERM_MASK) | PERM_REG;
+		}
 
-        else{
-            // set_ptbl_entry(pid, pde_index, i, old_pte>>PAGE_SHIFT, PERM_COW);
-            *(unsigned int*)(new_pde + 4*i) = old_pte;
-        }
-    }
+		else{
+			// set_ptbl_entry(pid, pde_index, i, old_pte>>PAGE_SHIFT, PERM_COW);
+			*(unsigned int*)(new_pde + 4*i) = old_pte;
+		}
+	}
 }

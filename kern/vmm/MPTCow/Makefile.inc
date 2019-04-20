@@ -3,19 +3,20 @@
 OBJDIRS		+= $(KERN_OBJDIR)/vmm/MPTCow
 
 KERN_SRCFILES	+= $(KERN_DIR)/vmm/MPTCow/MPTCow.c
-ifdef TEST
-KERN_SRCFILES	+= $(KERN_DIR)/vmm/MPTCow/test.c
-endif
+# ifdef TEST
+# KERN_SRCFILES	+= $(KERN_DIR)/vmm/MPTCow/test.c
+# endif
 
 $(KERN_OBJDIR)/vmm/MPTCow/MPTCow.o: $(KERN_DIR)/vmm/MPTCow/MPTCow.c
 	@echo + $(COMP_NAME)[KERN/vmm/MPTCow] $<
 	@mkdir -p $(@D)
-ifdef SOL 
-	$(V)echo "Copying solution MPTCow: " + $(notdir $@) 
-	$(V)cp $(SAMPLE_KERN_DIR)/vmm/MPTCow/$(notdir $@) $@
-else
+# ifdef SOL 
+# 	$(V)echo "Copying solution MPTCow: " + $(notdir $@) 
+# 	$(V)cp $(SAMPLE_KERN_DIR)/vmm/MPTCow/$(notdir $@) $@
+# else
+# 	$(V)$(CCOMP) $(CCOMP_KERN_CFLAGS) -c -o $@ $<
+# endif
 	$(V)$(CCOMP) $(CCOMP_KERN_CFLAGS) -c -o $@ $<
-endif
 
 $(KERN_OBJDIR)/vmm/MPTCow/test.o: $(KERN_DIR)/vmm/MPTCow/test.c
 	$(V)$(CCOMP) $(CCOMP_KERN_CFLAGS) -c -o $@ $<

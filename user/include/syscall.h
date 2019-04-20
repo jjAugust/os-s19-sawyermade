@@ -60,7 +60,7 @@ sys_spawn(uintptr_t exec, unsigned int quota)
     "memory"
   );
 
-  if(a == NUM_IDS)
+  if(a != E_SUCC)
     return -1;
 
   return b;
