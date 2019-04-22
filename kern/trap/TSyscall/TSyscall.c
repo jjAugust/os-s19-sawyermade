@@ -88,7 +88,7 @@ void sys_spawn(void)
 {
   // TODO
   unsigned int elf_id = syscall_get_arg2(), quota = syscall_get_arg3(), proc;
-  dprintf("\nelf_id = %d\n", elf_id);
+  // dprintf("\nelf_id = %d\n", elf_id);
   switch(elf_id){
     case 1: proc = proc_create(_binary___obj_user_pingpong_ping_start, quota); break;
 
@@ -108,6 +108,9 @@ void sys_spawn(void)
   }
 
   else{
+    // if(elf_id == 4)
+    //   syscall_set_errno(3);
+    // else
     syscall_set_errno(E_SUCC);
     syscall_set_retval1(proc);
   }
@@ -132,9 +135,11 @@ void sys_yield(void)
 
 void sys_fork(void) {
 
-  dprintf("\nIn sys_fork(), E_SUCC = %d\n", E_SUCC);
+  // dprintf("\nIn sys_fork(), E_SUCC = %d\n", E_SUCC);
+  unsigned int chid = proc_fork(_binary___obj_user_fork_fork_start);
 
-  syscall_set_retval1(proc_fork(_binary___obj_user_fork_fork_start));
+  syscall_set_retval1(chid);
   // syscall_set_retval1(0);
   syscall_set_errno(E_SUCC);
+  // dprintf("\nsys_fork() chid = %d\n", chid);
 }

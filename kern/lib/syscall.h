@@ -41,14 +41,14 @@ enum __syscall_nr {
 };
 
 enum __error_nr {
-	E_SUCC,		/* no errors */
-	E_MEM,		/* memory failure */
-	E_IPC,
-	E_INVAL_CALLNR,	/* invalid syscall number */
-	E_INVAL_ADDR,	/* invalid address */
-	E_INVAL_PID,	/* invalid process ID */
-	E_INVAL_REG,
-	E_INVAL_SEG,
+	E_SUCC,		/*0 no errors */
+	E_MEM,		/*1 memory failure */
+	E_IPC,		//2
+	E_INVAL_CALLNR,	/*3 invalid syscall number */
+	E_INVAL_ADDR,	/*4 invalid address */
+	E_INVAL_PID,	/*5 invalid process ID */
+	E_INVAL_REG,	//6
+	E_INVAL_SEG,	//7
 	E_INVAL_EVENT,
 	E_INVAL_PORT,
 	E_INVAL_HVM,

@@ -9,19 +9,22 @@ uint32_t global_test = 0x12345678;
 
 int main (int argc, char **argv)
 {
-    printf("\nIn fork.c\n");
+    // printf("\nIn fork.c\n");
 
     pid_t pid;
 
     pid = sys_fork();
+    // printf("fork.c pid = %d\n", pid);
 
     if (pid == 0){
         global_test = 0x1234;
         pid = sys_fork();
 
         if(pid == 0){
+            global_test = 0x69;
             printf("This is grandchild, global = %p\n", global_test);
-        }else{
+        }
+        else{
             printf("Child forks %d, global = %p\n", pid, global_test);
         }
     }else{

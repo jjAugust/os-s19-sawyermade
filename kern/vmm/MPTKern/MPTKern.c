@@ -50,6 +50,7 @@ unsigned int map_page(unsigned int proc_index, unsigned int vadr, unsigned int p
   // TODO
   unsigned int pde_index=0, pde=0, addr=0;
   pde = get_pdir_entry_by_va(proc_index, vadr);
+  // dprintf("map_page pde = %08x\n", pde);
   pde_index = pde>>12;
   if(pde_index < 1){
     addr = alloc_ptbl(proc_index, vadr);
@@ -59,7 +60,7 @@ unsigned int map_page(unsigned int proc_index, unsigned int vadr, unsigned int p
 
   }
   else{
-    0;
+    // 0;
     // pde_index = pde<<12;
     // pde_index = pde / PAGESIZE;
   }
@@ -71,7 +72,7 @@ unsigned int map_page(unsigned int proc_index, unsigned int vadr, unsigned int p
   if(addr != 0)
     return addr;
   else
-    return pde_index;
+    return pde;
 }
 
 /** TASK 3:

@@ -14,7 +14,7 @@ void syscall_dispatch(void)
 {
 	// TODO
 	unsigned int call = syscall_get_arg1();
-
+	// dprintf("\nIn syscall_dispatch()\n");
 	switch(call){
 		case SYS_puts : sys_puts(); break;
 
@@ -22,7 +22,7 @@ void syscall_dispatch(void)
 
 		case SYS_yield : sys_yield(); break;
 
-		case SYS_fork : dprintf("\nIn syscall_dispatch()\n"); sys_fork(); break;
+		case SYS_fork : sys_fork(); break;
 
 		default : syscall_set_errno(E_INVAL_CALLNR); break;
 	}
