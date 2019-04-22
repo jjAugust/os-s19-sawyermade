@@ -21,7 +21,7 @@ int main (int argc, char **argv)
         pid = sys_fork();
 
         if(pid == 0){
-            global_test = 0x69;
+            // global_test = 0x69;
             printf("This is grandchild, global = %p\n", global_test);
         }
         else{

@@ -57,7 +57,6 @@ void pgflt_handler(void)
 
 	cur_pid = get_curid();
 	errno = uctx_pool[cur_pid].err;
-  // errno = uctx_pool[cur_pid].regs.eax;
 	fault_va = rcr2();
 
   //Uncomment this line if you need to see the information of the sequence of page faults occured.

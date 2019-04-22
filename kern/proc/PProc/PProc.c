@@ -70,38 +70,25 @@ unsigned int proc_create(void *elf_addr, unsigned int quota)
 
 
 unsigned int proc_fork(void *elf_addr) {
-  
+  //DEBUG
   // dprintf("\nIN proc_fork()\n");
 
-  // Gets 
-  unsigned int id = get_curid(), quota = (container_get_quota(id) - container_get_usage(id)) / 2, pid;
-  // dprintf("\nIn proc_fork() eax = %d, ebx = %d, err = %d\n", uctx_pool[id].regs.eax, uctx_pool[id].regs.ebx, uctx_pool[id].err);
-  // dprintf("\neip = %d\n", uctx_pool[id].eip);
+  // Local vars
+  unsigned int curid, quota, chid;
 
-  pid = thread_spawn((void *)proc_start_user, id, quota);
-  // dprintf("id = %d, pid = %d\n", id, pid);
-  map_cow(id, pid);
+  // Gets current pid and quota
+  curid = get_curid();
+  quota = (container_get_quota(curid) - container_get_usage(curid)) / 2;
 
-  // elf_load(elf_addr, pid);
-  uctx_pool[pid] = uctx_pool[id];
-  // uctx_pool[pid].es = uctx_pool[id].es;
-  // uctx_pool[pid].ds = uctx_pool[id].ds;
-  // uctx_pool[pid].cs = uctx_pool[id].cs;
-  // uctx_pool[pid].ss = uctx_pool[id].ss;
-  // uctx_pool[pid].esp = uctx_pool[id].esp;
-  // uctx_pool[pid].eflags = uctx_pool[id].eflags;
-  uctx_pool[pid].regs.eax = 0;
-  uctx_pool[pid].regs.ebx = 0;
-  // uctx_pool[pid].err = 0;
-  // uctx_pool[pid].eip = elf_entry(elf_addr);
-  // uctx_pool[pid].eip = uctx_pool[id].eip;
-  // dprintf("\nPID=%d: eip = %d, .err = %d, .eax = %d, .ebx = %d\n", pid, uctx_pool[pid].eip, uctx_pool[pid].err, uctx_pool[pid].regs.eax, uctx_pool[pid].regs.ebx);
-  // dprintf("\nID=%d: eax = %d, ebx = %d, err = %d\n", id, uctx_pool[id].regs.eax, uctx_pool[id].regs.ebx, uctx_pool[id].err);
-  // uctx_pool[id].regs.eax = 3;
-  // uctx_pool[id].regs.ebx = pid;
-  // uctx_pool[id].err = 3;
+  // Spawns child fork and sets up copy on write
+  chid = thread_spawn((void *)proc_start_user, curid, quota);
+  map_cow(curid, chid);
 
-  // map_cow(id, pid);
+  // Copies context and sets error and chid registers for new process
+  uctx_pool[chid] = uctx_pool[curid];
+  uctx_pool[chid].regs.eax = 0;
+  uctx_pool[chid].regs.ebx = 0;
 
-  return pid;
+  // Returns chid to parent/curid
+  return chid;
 }

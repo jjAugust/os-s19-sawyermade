@@ -49,125 +49,63 @@
  */
 
 void map_cow(unsigned int from_pid, unsigned int to_pid) {
-	
+	//DEBUG
 	dprintf("In map_cow()\n");
 
 	// Local vars
-	unsigned int i, j, lo, hi, pde, pde_shift, pte, pte_shift, pde_new;
+	unsigned int i, j, lo, hi, pde, pde_new, pte;
 
 	// User space
 	lo = VM_USERLO / PAGESIZE / PAGENUM;
 	hi = VM_USERHI / PAGESIZE / PAGENUM;
 
 	// Copies user space
-	// for(i = lo; i < hi; i++){
-	// 	// dprintf("\nfrom pde[%d] = %d, to pde[%d] = %d\n", i, get_pdir_entry(from_pid, i)>>12, i, get_pdir_entry(to_pid, i)>>12);
-	// 	// pde = get_pdir_entry(to_pid, i);
-	// 	// if(pde != 0)
-	// 	//     dprintf("\nog pde = %d, i = %d", pde, i);
-
-	// 	// Gets pde from, sets to to
-	// 	pde = get_pdir_entry(from_pid, i);
-	// 	pde_shift = pde>>PAGE_SHIFT;
-	// 	if(pde_shift > 0){
-	// 		pde_new = container_alloc(to_pid);
-	// 		set_pdir_entry_fork(from_pid, i, pde_shift<<12 | PTE_COW | PTE_U | PTE_P);
-	// 		set_pdir_entry_fork(to_pid, i, pde_new<<12 | PTE_COW | PTE_U | PTE_P);
-	// 		dprintf("\npde = 0x%08x, pde_new = %d, pde_shift = %d\n", pde, pde_new, pde_shift);
-	// 	}
-
-	// 	// set_pdir_entry_identity(to_pid, i);
-
-	// 	//Maybe
-	// 	// pde = pde<<PAGE_SHIFT | PTE_COW;
-	// 	// set_pdir_entry_fork(to_pid, i, pde);
-	// 	// set_pdir_entry_fork(from_pid, i, pde);
-	// 	if(pde_shift > 0){
-	// 		// dprintf("\nfrom pde[%d] = %d, to pde[%d] = %d", i, get_pdir_entry(from_pid, i), i, get_pdir_entry(to_pid, i));
-	// 		for(j = 0; j < PAGENUM; j++){
-	// 			pte = get_ptbl_entry(from_pid, i, j);
-	// 			pte_shift = pte>>PAGE_SHIFT;
-	// 			if(pte_shift > 0){
-	// 				dprintf("\nj=%d, pte = 0x%08x, pte_shift = %d\n", j, pte, pte_shift);
-	// 				set_ptbl_entry(from_pid, i, j, pte_shift, PTE_COW | PTE_P | PTE_U);
-	// 				set_ptbl_entry(to_pid, i, j, pte_shift, PTE_COW | PTE_P | PTE_U);
-
-	// 				dprintf("pte val = %d\n", *(unsigned int*)(pte_shift<<12));
-	// 			}
-				
-	// 			// set_ptbl_entry(from_pid, i, j, pte, PERM_COW | ~PTE_W);
-	// 		}
-	// 	}
-	// }
 	for(i = lo; i < hi; i++){
+		// Gets from pde
 		pde = get_pdir_entry(from_pid, i);
-		pde = pde>>12;
-		if(pde != 0){
-			// set_pdir_entry_fork(from_pid, i, (pde & PERM_MASK) | PTE_U | PTE_P | PTE_COW);
-			// set_pdir_entry_fork(to_pid, i, (pde & PERM_MASK) | PTE_U | PTE_P | PTE_COW);
-			
+		pde = pde>>PAGE_SHIFT;
+
+		// If pde exists, create pde for child and copy ptes
+		if(pde){
+			// Creates pde for child pid
 			pde_new = container_alloc(to_pid);
-			// dprintf("pde_new = %d\n", pde_new);
 			set_pdir_entry(to_pid, i, pde_new);
 
-			// set_pdir_entry(to_pid, i, pde);
-
+			// Copies ptes to the child and sets both perms to COW
 			for(j = 0; j < PAGENUM; j++){
+				// Gets parent pte
 				pte = get_ptbl_entry(from_pid, i, j);
-				pte = pte>>12;
+				pte = pte>>PAGE_SHIFT;
 
-				if(pte != 0){
+				// pte exists, copy addr and change perms in both
+				if(pte){
 					set_ptbl_entry(from_pid, i, j, pte, PERM_COW);
 					set_ptbl_entry(to_pid, i, j, pte, PERM_COW);
 				}
 			}
 		}
 	}
-
+	//DEBUG
 	// dprintf("map_cow() end\n");
 }
 
 void map_decow(unsigned int pid, unsigned int vadr) {
-	
+	//DEBUG
 	// dprintf("\nIn map_decow(), pid = %d, va = 0x%08x\n", pid, vadr);
 	dprintf("In map_decow()\n");
 
 	// Local vars
-	unsigned int old_pde=0, new_pde=0, pde_index=0, pte_index=0;
-	unsigned int i, j, old_pte, temp_pte, new_pte;
+	unsigned int old_pte=0, new_pde=0, new_pte=0, i;
 
-	// old_pte = get_ptbl_entry_by_va(pid, vadr);
-	// old_pte = old_pte>>12;
-	// old_pte = old_pte<<12;
-	// new_pte = alloc_page(pid, vadr, PERM_REG);
-	// new_pte = new_pte<<12;
-
-	// *(unsigned int*)old_pte = 69;
-	// *(unsigned int*)new_pte = *(unsigned int*)old_pte;
-	// new_pte = new_pte>>12;
-	// set_ptbl_entry_by_va(pid, vadr, new_pte, PERM_REG);
-
-	// new_pte = new_pte<<12;
-	// dprintf("old_pte = 0x%08x %d, new_pte = 0x%08x %d\n", old_pte, old_pte, new_pte, new_pte);
-	// dprintf("old_pte val = %d, new_pte val = %d\n", *(unsigned int*)old_pte, *(unsigned int*)new_pte);
-
-	// old_pde = get_pdir_entry_by_va(pid, vadr);
-
+	// Gets pte to copy
 	old_pte = get_ptbl_entry_by_va(pid, vadr);
 	old_pte = old_pte & PERM_MASK;
 
-	// rmv_ptbl_entry_by_va(pid, vadr);
-	// rmv_pdir_entry_by_va(pid, vadr);
-
+	// Allocs new page and gets the newly allocated pte
 	new_pde = alloc_page(pid, vadr, PERM_REG);
-	// dprintf("new_pde = %08x, %08x\n", new_pde, old_pde);
-	// dprintf("new_pte = %08x, %08x\n", new_pde, old_pte);
-	// set_ptbl_entry_by_va(pid, vadr, new_pte, PERM_REG);
 	new_pte = get_ptbl_entry_by_va(pid, vadr) & PERM_MASK;
-	// dprintf("set? %08x\n", new_pte);
 
-	// *(unsigned int*)(new_pte<<12) = *(unsigned int*)old_pte;
-	// new_pte = new_pte<<12;
+	// Copies page table to child
 	for(i = 0; i < 1024; i++){
 		*(unsigned int*)(new_pte + 4*i) = *(unsigned int*)(old_pte + 4*i);
 	}
