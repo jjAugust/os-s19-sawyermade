@@ -136,7 +136,7 @@ void sys_yield(void)
 void sys_fork(void) {
 
   // dprintf("\nIn sys_fork(), E_SUCC = %d\n", E_SUCC);
-  unsigned int chid = proc_fork(_binary___obj_user_fork_fork_start);
+  unsigned int chid = proc_fork();
 
   syscall_set_retval1(chid);
   // syscall_set_retval1(0);

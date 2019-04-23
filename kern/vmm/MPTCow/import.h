@@ -3,6 +3,8 @@
 
 #ifdef _KERN_
 
+unsigned int get_curid(void);
+
 void set_pdir_base(unsigned int);
 unsigned int get_pdir_entry(unsigned int, unsigned int);
 void set_pdir_entry(unsigned int, unsigned int, unsigned int);
@@ -19,6 +21,16 @@ unsigned int alloc_page(unsigned int, unsigned int, unsigned int);
 unsigned int alloc_mem_quota(unsigned int, unsigned int);
 
 unsigned int container_alloc(unsigned int);
+
+unsigned int get_curid(void);
+void set_pdir_base(unsigned int);
+unsigned int thread_spawn(void *entry, unsigned int id, unsigned int quota);
+unsigned int thread_fork(void *entry, unsigned int id, unsigned int quota);
+
+unsigned int container_get_quota(unsigned int);
+unsigned int container_get_usage(unsigned int);
+
+void proc_start_user(void);
 
 unsigned int get_ptbl_entry_by_va(unsigned int, unsigned int);
 unsigned int get_pdir_entry_by_va(unsigned int, unsigned int);

@@ -1,11 +1,12 @@
 #include <lib/gcc.h>
 #include <lib/x86.h>
 #include <lib/debug.h>
+#include <lib/trap.h>
 
 #include "import.h"
 
 #define VM_USERLO   0x40000000
-#define VM_USERHI   0xF0000000
+// #define VM_USERHI   0xF0000000
 #define DIR_MASK    0xffc00000
 #define PAGE_MASK   0x003ff000
 #define OFFSET_MASK 0x00000fff
@@ -16,6 +17,8 @@
 #define PERM_MASK   0xfffff000
 #define PERM_COW	(PTE_COW | PTE_U | PTE_P)
 #define PERM_REG    (PTE_W | PTE_U | PTE_P)
+
+extern tf_t uctx_pool[NUM_IDS];
 
 /** ASSIGNMENT INFO:
   * - In this part of the kernel, we will be implementing Virtual Memory Management (VMM) with 
@@ -50,7 +53,7 @@
 
 void map_cow(unsigned int from_pid, unsigned int to_pid) {
 	//DEBUG
-	dprintf("In map_cow()\n");
+	// dprintf("In map_cow()\n");
 
 	// Local vars
 	unsigned int i, j, lo, hi, pde, pde_new, pte;
@@ -92,21 +95,49 @@ void map_cow(unsigned int from_pid, unsigned int to_pid) {
 void map_decow(unsigned int pid, unsigned int vadr) {
 	//DEBUG
 	// dprintf("\nIn map_decow(), pid = %d, va = 0x%08x\n", pid, vadr);
-	dprintf("In map_decow()\n");
+	// dprintf("In map_decow()\n");
 
 	// Local vars
-	unsigned int old_pte=0, new_pde=0, new_pte=0, i;
+	unsigned int old_pte=0, new_pte=0, i, *to, *from;
 
 	// Gets pte to copy
 	old_pte = get_ptbl_entry_by_va(pid, vadr);
 	old_pte = old_pte & PERM_MASK;
 
 	// Allocs new page and gets the newly allocated pte
-	new_pde = alloc_page(pid, vadr, PERM_REG);
+	alloc_page(pid, vadr, PERM_REG);
 	new_pte = get_ptbl_entry_by_va(pid, vadr) & PERM_MASK;
+
+	// Pointer setup
+	to = (unsigned int*)new_pte; 
+	from = (unsigned int*)old_pte;
 
 	// Copies page table to child
 	for(i = 0; i < 1024; i++){
-		*(unsigned int*)(new_pte + 4*i) = *(unsigned int*)(old_pte + 4*i);
+		to[i] = from[i];
 	}
+}
+
+unsigned int proc_fork(void) {
+	//DEBUG
+	// dprintf("\nIN proc_fork()\n");
+
+	// Local vars
+	unsigned int curid, quota, chid;
+
+	// Gets current pid and quota
+	curid = get_curid();
+	quota = (container_get_quota(curid) - container_get_usage(curid)) / 2;
+
+	// Spawns child fork and sets up copy on write
+	chid = thread_spawn((void *)proc_start_user, curid, quota);
+	map_cow(curid, chid);
+
+	// Copies context and sets error and chid registers for new process
+	uctx_pool[chid] = uctx_pool[curid];
+	uctx_pool[chid].regs.eax = 0;
+	uctx_pool[chid].regs.ebx = 0;
+
+	// Returns chid to parent/curid
+	return chid;
 }

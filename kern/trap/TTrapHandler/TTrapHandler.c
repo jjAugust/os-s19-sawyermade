@@ -72,7 +72,7 @@ void pgflt_handler(void)
       map_decow(cur_pid, fault_va);
       return;
     }
-    dprintf("errno=%d, pte_entry = 0x%08x %d, cur_pid = %d\n", errno, pte_entry, pte_entry, cur_pid);
+    // dprintf("errno=%d, pte_entry = 0x%08x %d, cur_pid = %d\n", errno, pte_entry, pte_entry, cur_pid);
   }
 
   

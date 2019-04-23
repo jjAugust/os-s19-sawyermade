@@ -69,26 +69,26 @@ unsigned int proc_create(void *elf_addr, unsigned int quota)
 }
 
 
-unsigned int proc_fork(void *elf_addr) {
-  //DEBUG
-  // dprintf("\nIN proc_fork()\n");
+// unsigned int proc_fork(void) {
+//   //DEBUG
+//   // dprintf("\nIN proc_fork()\n");
 
-  // Local vars
-  unsigned int curid, quota, chid;
+//   // Local vars
+//   unsigned int curid, quota, chid;
 
-  // Gets current pid and quota
-  curid = get_curid();
-  quota = (container_get_quota(curid) - container_get_usage(curid)) / 2;
+//   // Gets current pid and quota
+//   curid = get_curid();
+//   quota = (container_get_quota(curid) - container_get_usage(curid)) / 2;
 
-  // Spawns child fork and sets up copy on write
-  chid = thread_spawn((void *)proc_start_user, curid, quota);
-  map_cow(curid, chid);
+//   // Spawns child fork and sets up copy on write
+//   chid = thread_spawn((void *)proc_start_user, curid, quota);
+//   map_cow(curid, chid);
 
-  // Copies context and sets error and chid registers for new process
-  uctx_pool[chid] = uctx_pool[curid];
-  uctx_pool[chid].regs.eax = 0;
-  uctx_pool[chid].regs.ebx = 0;
+//   // Copies context and sets error and chid registers for new process
+//   uctx_pool[chid] = uctx_pool[curid];
+//   uctx_pool[chid].regs.eax = 0;
+//   uctx_pool[chid].regs.ebx = 0;
 
-  // Returns chid to parent/curid
-  return chid;
-}
+//   // Returns chid to parent/curid
+//   return chid;
+// }

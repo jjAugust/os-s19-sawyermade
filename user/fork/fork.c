@@ -10,7 +10,6 @@ uint32_t global_test = 0x12345678;
 int main (int argc, char **argv)
 {
     // printf("\nIn fork.c\n");
-
     pid_t pid;
 
     pid = sys_fork();
@@ -27,7 +26,8 @@ int main (int argc, char **argv)
         else{
             printf("Child forks %d, global = %p\n", pid, global_test);
         }
-    }else{
+    }
+    else{
         printf("parent forks %d, global = %p\n", pid, global_test);
         global_test = 0x5678;
         printf("parent global_test1 = %p\n", global_test);
