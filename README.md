@@ -55,6 +55,11 @@ Makes and runs the file in qemu, and cleans everything up on completion.
 ```
 $ bash run.sh
 ```
+### Run Solution: 
+Makes and runs the file in qemu, and cleans everything up on completion.
+```
+$ bash sol_run.sh
+```
 ### Test Run:
 Makes with TEST=1, runs tests, and cleans everything up on completion.
 ```
