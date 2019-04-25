@@ -109,7 +109,7 @@ void map_decow(unsigned int pid, unsigned int vadr) {
 	count = cow_get(old_pte>>12);
 	// dprintf("count = %u\n", count);
 
-	if(count == 1){
+	if(count < 2){
 		set_ptbl_entry_by_va(pid, vadr, old_pte>>12, PERM_REG);
 	}
 

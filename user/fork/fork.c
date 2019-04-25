@@ -22,6 +22,15 @@ int main (int argc, char **argv)
         if(pid == 0){
             // global_test = 0x69;
             printf("This is grandchild, global = %p\n", global_test);
+
+            // pid = sys_fork();
+            // if(pid == 0){
+            //     // global_test = 0x666;
+            //     printf("This is great grandchild, global = %p\n", global_test);
+            // }
+            // else{
+            //     printf("This is grandchild again, global = %p\n", global_test);
+            // }
         }
         else{
             printf("Child forks %d, global = %p\n", pid, global_test);

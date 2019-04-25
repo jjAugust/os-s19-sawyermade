@@ -69,6 +69,7 @@ void pgflt_handler(void)
   if((errno & 0x3) == 0x3){
     pte_entry = get_ptbl_entry_by_va(cur_pid, fault_va);
     if((pte_entry & PTE_COW) == PTE_COW){
+      // dprintf("errno=%d, pte_entry = 0x%08x %d, cur_pid = %d\n", errno, pte_entry, pte_entry, cur_pid);
       map_decow(cur_pid, fault_va);
       return;
     }
