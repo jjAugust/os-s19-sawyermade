@@ -121,3 +121,15 @@ at_set_allocated(unsigned int page_index, unsigned int allocated)
   //TODO
   AT[page_index].allocated = allocated;
 }
+
+void cow_plus(unsigned int page_index){ 
+  ++AT[page_index].allocated;
+}
+
+void cow_minus(unsigned int page_index) { 
+  --AT[page_index].allocated;
+}
+
+unsigned int cow_get(unsigned int page_index){ 
+  return AT[page_index].allocated; 
+}

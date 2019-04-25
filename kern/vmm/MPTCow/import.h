@@ -39,6 +39,10 @@ void set_pdir_entry_by_va(unsigned int, unsigned int, unsigned int);
 void rmv_ptbl_entry_by_va(unsigned int, unsigned int);
 void rmv_pdir_entry_by_va(unsigned int, unsigned int);
 
+void cow_plus(unsigned int);
+void cow_minus(unsigned int);
+unsigned int cow_get(unsigned int);
+
 #endif /* _KERN_ */
 
 #endif /* !_KERN_MM_MPTCOW_H_ */

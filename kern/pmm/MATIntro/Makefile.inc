@@ -10,12 +10,13 @@ endif
 $(KERN_OBJDIR)/pmm/MATIntro/MATIntro.o: $(KERN_DIR)/pmm/MATIntro/MATIntro.c
 	@echo + $(COMP_NAME)[KERN/pmm/MATIntro] $<
 	@mkdir -p $(@D)
-ifdef SOL 
-	$(V)echo "Copying solution MATIntro: " + $(notdir $@)
-	$(V)cp $(SAMPLE_KERN_DIR)/pmm/MATIntro/$(notdir $@) $@
-else
+# ifdef SOL 
+# 	$(V)echo "Copying solution MATIntro: " + $(notdir $@)
+# 	$(V)cp $(SAMPLE_KERN_DIR)/pmm/MATIntro/$(notdir $@) $@
+# else
+# 	$(V)$(CCOMP) $(CCOMP_KERN_CFLAGS) -c -o $@ $<
+# endif
 	$(V)$(CCOMP) $(CCOMP_KERN_CFLAGS) -c -o $@ $<
-endif
 
 $(KERN_OBJDIR)/pmm/MATIntro/test.o: $(KERN_DIR)/pmm/MATIntro/test.c
 	$(V)$(CCOMP) $(CCOMP_KERN_CFLAGS) -c -o $@ $<

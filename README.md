@@ -46,6 +46,7 @@ $ git push -f origin v1
 
 
 ## Anything we should know???
+Extra credit included, I added increment and decrement functions to MATIntro.c in order to control the AT[].allocated value. If the value equals one, I remove the COW permissions and make them regular. If it is greater than one, I just decow as usual and decrement. The allocated value is incremented on map_cow, decremented on map_decow if greater than one. Pretty simple. Both my previous solutions and using SOL=1 should work correctly.
 ### Install Dependencies:
 ```
 $ bash install_deps.sh

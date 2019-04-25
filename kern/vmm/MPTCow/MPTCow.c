@@ -84,6 +84,7 @@ void map_cow(unsigned int from_pid, unsigned int to_pid) {
 				if(pte){
 					set_ptbl_entry(from_pid, i, j, pte, PERM_COW);
 					set_ptbl_entry(to_pid, i, j, pte, PERM_COW);
+					cow_plus(pte);
 				}
 			}
 		}
@@ -98,23 +99,37 @@ void map_decow(unsigned int pid, unsigned int vadr) {
 	// dprintf("In map_decow()\n");
 
 	// Local vars
-	unsigned int old_pte=0, new_pte=0, i, *to, *from;
+	unsigned int old_pte=0, new_pte=0, i, *to, *from, count;
 
 	// Gets pte to copy
 	old_pte = get_ptbl_entry_by_va(pid, vadr);
 	old_pte = old_pte & PERM_MASK;
 
-	// Allocs new page and gets the newly allocated pte
-	alloc_page(pid, vadr, PERM_REG);
-	new_pte = get_ptbl_entry_by_va(pid, vadr) & PERM_MASK;
+	// Get alloc count refs
+	count = cow_get(old_pte>>12);
+	// dprintf("count = %u\n", count);
 
-	// Pointer setup
-	to = (unsigned int*)new_pte; 
-	from = (unsigned int*)old_pte;
+	if(count == 1){
+		set_ptbl_entry_by_va(pid, vadr, old_pte>>12, PERM_REG);
+	}
 
-	// Copies page table to child
-	for(i = 0; i < 1024; i++){
-		to[i] = from[i];
+	// If more than one ref, copies
+	else{
+		// Allocs new page and gets the newly allocated pte
+		alloc_page(pid, vadr, PERM_REG);
+		new_pte = get_ptbl_entry_by_va(pid, vadr) & PERM_MASK;
+
+		// Pointer setup
+		to = (unsigned int*)new_pte; 
+		from = (unsigned int*)old_pte;
+
+		// Copies page table to child
+		for(i = 0; i < 1024; i++){
+			to[i] = from[i];
+		}
+
+		// Remove one ref alloc
+		cow_minus(old_pte>>12);
 	}
 }
 
